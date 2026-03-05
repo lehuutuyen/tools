@@ -87,6 +87,19 @@ Luôn tuân thủ:
 - Tách input thành nhiều thẻ nếu có nhiều ý rõ ràng khác nhau.
 - Nếu thiếu bối cảnh VN → trả về "CẦN BỔ SUNG: ghi chú thiếu bối cảnh thực tế" trong field vi_du_vn.
 - Ngôn ngữ gần gũi, sắc bén, không sáo rỗng.
+
+Luôn ưu tiên tách tối đa nếu ghi chú có:
+- Nhiều khoảnh khắc / ví dụ khác nhau (ví dụ: khoảnh khắc 1 vs khoảnh khắc 2)
+- So sánh hai cách làm (cũ vs mới, Mỹ vs Nhật, làm nhiều vs mài dao)
+- Kết luận + lý do riêng biệt
+Mỗi thẻ PHẢI độc lập hoàn toàn, không lặp ý, không kể chuyện nối tiếp.
+
+dieu_bat_ngo PHẢI là điều khiến người nghe bàn nhậu đặt ly xuống: dùng góc dark psychology (hệ thống 1 bị lừa dù biết), contrast cực đoan, hoặc nghịch lý thực tế (biết mà vẫn dính, làm nhiều lại thua làm ít).
+
+giai_thich phải tạo cảm giác "trời ơi đúng là mình" – dùng ngôn ngữ đời thường, chạm nỗi đau kinh doanh solo (vất vả, mất thời gian, khách không chốt dù quảng cáo ngon).
+
+Nếu input có yếu tố "mài dao 80/20" hoặc "tĩnh chế động" → ưu tiên framework REFRAME hoặc STORY_LENS.
+
 Chỉ trả về JSON array thuần. Không markdown, không giải thích, không text nào ngoài JSON. Bắt đầu bằng [ và kết thúc bằng ].`;
 
 const SUGGEST_PROMPT = `Bạn là chuyên gia đánh giá Atomic Content cho Xưởng Tâm Lý Học.
@@ -101,6 +114,8 @@ Kiểm tra 5 điểm:
 3. Câu cốt lõi có thể viết được 1 câu ≤20 từ không, hay ý quá mơ hồ?
 4. Có "điều bất ngờ" đảo lộn nhận thức không, hay chỉ là thông tin bình thường?
 5. Nguồn thuộc loại nào: "Tâm Lý Mua & Bán" / "Quan sát thực tế" / "Hook viral"?
+6. Có tiềm năng "điều bất ngờ" mạnh không? (điểm từ 1-10, nếu <6 thì cảnh báo)
+7. Có thể map vào framework nào? (REFRAME / STORY_LENS / SPEAR / MYTH_BREAK / TRANSFORM)
 
 Trả về JSON object với cấu trúc:
 {
@@ -108,7 +123,9 @@ Trả về JSON object với cấu trúc:
   "chat_luong_tong_the": "TỐT | KHÁ | CẦN BỔ SUNG",
   "goi_y": ["gợi ý 1 cụ thể", "gợi ý 2 cụ thể", ...],
   "diem_manh": "1-2 câu nêu điểm mạnh của ghi chú",
-  "canh_bao": "cảnh báo nếu ghi chú quá mơ hồ, hoặc '' nếu ổn"
+  "canh_bao": "cảnh báo nếu ghi chú quá mơ hồ, hoặc '' nếu ổn",
+  "diem_bat_ngo": <số từ 1-10>,
+    "framework_goi_y": "REFRAME" hoặc "STORY_LENS" hoặc "...",
 }
 
 Chỉ trả về JSON object thuần. Bắt đầu bằng { và kết thúc bằng }.`;
@@ -143,7 +160,7 @@ function App() {
         "Authorization": `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "gpt-4o-mini",  // thay vì gpt-4o,
         temperature: 0.4,
         max_tokens: maxTokens,
         messages: [
