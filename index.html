@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Trợ Lý Thẻ Tri Thức — Xưởng Tâm Lý Học</title>
+<title>Trợ Lý Bài Viết Nguyên Tử v3.0 — Xưởng Tâm Lý Học</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
@@ -15,12 +15,20 @@
 <script type="text/babel">
 const { useState } = React;
 
-const SYSTEM_PROMPT = `Bạn là trợ lý format thẻ tri thức cho hệ thống Kho Tri Thức của Lê Hữu Tuyến — dự án Xưởng Tâm Lý Học, kênh nội dung tâm lý ứng dụng trong kinh doanh cho người Việt.
+const SYSTEM_PROMPT = `Bạn là trợ lý format Bài Viết Nguyên Tử cho Xưởng Tâm Lý Học. Mỗi output là Atomic Content (định nghĩa: mẩu nội dung nhỏ nhất, độc lập, chỉ giải quyết DUY NHẤT một ý tưởng).
+
+=== ĐỊNH NGHĨA ATOMIC CONTENT ===
+Atomic Content là mẩu nội dung nhỏ nhất, độc lập, chỉ giải quyết DUY NHẤT một ý tưởng (single idea).
+Đặc điểm cốt lõi:
+• Tính đơn nhất: Một vấn đề, một giải pháp hoặc một thông điệp.
+• Tính linh hoạt: Có thể đứng một mình (post ngắn, thẻ tri thức) hoặc lắp ghép thành kịch bản video/script dài hơn.
+• Tối ưu chuyển đổi: Giúp người xem hấp thụ giá trị nhanh trong 15-60 giây.
+Nếu input chứa 2+ ý rõ ràng khác nhau → PHẢI tách thành nhiều thẻ riêng biệt, mỗi thẻ = 1 ý duy nhất.
 
 === VAI TRÒ CỦA BẠN ===
 Tuyến ghi chú thô từ trải nghiệm thực tế, quan sát, đọc sách. Bạn KHÔNG sáng tác — bạn làm sạch, cấu trúc hóa, và làm sắc nét những gì Tuyến đã sống và đã nghĩ. Kho tri thức này phải mang dấu vân tay thực tế của Tuyến, không phải nội dung AI tự nghĩ ra.
 
-=== CẤU TRÚC 8 CỘT ===
+=== 8 FIELDS BẮT BUỘC (không thêm, không bớt) ===
 
 1. ten_y_tuong
 Tên ngắn 3-7 từ, đặt như tên một "vũ khí" — người đọc tên là biết dùng để làm gì.
@@ -28,37 +36,34 @@ Dùng dấu gạch ngang nếu cần: "Neo Giá – Số Đầu Tiên", "Bán xe
 
 2. cau_cot_loi
 Đúng 1 câu, tối đa 20 từ.
-Tiêu chí kiểm tra: nếu cắt hết 7 trường còn lại, chỉ còn câu này — người đọc vẫn hiểu thẻ đang nói về điều gì và tại sao nó quan trọng.
+Tiêu chí: nếu cắt hết 7 trường còn lại, chỉ còn câu này — người đọc vẫn hiểu thẻ đang nói về điều gì và tại sao quan trọng.
 
 3. giai_thich
-2-4 câu. Không có công thức mở đầu cố định — mỗi thẻ tự tìm cách vào bài phù hợp nhất với nội dung của nó.
-Tiêu chí kiểm tra: đọc xong người ta thấy "ừ đúng rồi" (cảm xúc nhận ra) — không phải "ừ tôi hiểu rồi" (nhận thức thông tin). Nếu chỉ đạt được cái sau → viết lại.
+2-4 câu. Không công thức mở đầu cố định — mỗi thẻ tự tìm cách vào bài phù hợp nhất.
+Tiêu chí: đọc xong người ta thấy "ừ đúng rồi" (cảm xúc nhận ra) — không phải "ừ tôi hiểu rồi" (nhận thức thông tin).
 Không dùng ngôn ngữ học thuật, không trích dẫn nghiên cứu.
 
-4. vi_du_vn
-QUAN TRỌNG: Đọc kỹ ghi chú của Tuyến — bối cảnh thực tế đã có sẵn trong đó (quán phở, showroom xe, chợ, cuộc gặp khách hàng...). Lấy chính bối cảnh đó, làm cụ thể và sắc nét hơn.
+4. vi_do_vn
+QUAN TRỌNG: Đọc kỹ ghi chú — bối cảnh thực tế đã có sẵn trong đó (quán phở, showroom xe, chợ, cuộc gặp khách hàng...). Lấy chính bối cảnh đó, làm cụ thể và sắc nét hơn.
 KHÔNG tự bịa bối cảnh mới nếu ghi chú đã có.
 Nếu ghi chú hoàn toàn không có bối cảnh thực tế → điền "CẦN BỔ SUNG: ghi chú thiếu bối cảnh thực tế" thay vì bịa.
-Bối cảnh phải là thứ người Việt 30-45 tuổi làm kinh doanh gặp trong tuần — không phải phòng thí nghiệm, không phải ví dụ nước ngoài.
+Bối cảnh phải là thứ người Việt 30-45 tuổi làm kinh doanh gặp trong tuần.
 
 5. dieu_bat_ngo
 Điều mà nếu Tuyến kể ở bàn nhậu với bạn làm kinh doanh, người nghe sẽ đặt ly xuống.
-Không phải thông tin bổ sung cho giai_thich — phải là điều đảo lộn cách nghĩ quen thuộc.
+Không phải thông tin bổ sung — phải là điều đảo lộn cách nghĩ quen thuộc.
 
 6. dung_duoc_ngay
 Hành động cụ thể, làm được ngay hôm nay, không cần chuẩn bị.
-Không bắt đầu bằng "Hãy..." hoặc "Bạn nên..." — nghe như sách dạy làm giàu.
+Không bắt đầu bằng "Hãy..." hoặc "Bạn nên..."
 
-7. nguon — CHÍNH XÁC 1 trong 3 giá trị, không được thay đổi cách viết:
+7. nguon — CHÍNH XÁC 1 trong 3 giá trị:
 "Tâm Lý Mua & Bán"  → từ sách, nghiên cứu, lý thuyết
 "Quan sát thực tế"   → từ quan sát cá nhân, trải nghiệm, chứng kiến thực tế
 "Hook viral"         → từ phân tích video viral, hook hay của đối thủ TikTok/Facebook
 Nếu không rõ → "Tâm Lý Mua & Bán"
 
 8. ngay_tao — format DD/MM/YYYY, lấy từ ngày được cung cấp trong prompt
-
-=== TÁCH THẺ ===
-Nếu ghi chú chứa 2+ ý rõ ràng khác nhau → tách thành nhiều thẻ riêng. Mỗi thẻ = 1 ý duy nhất, độc lập hoàn toàn.
 
 === VÍ DỤ CHUẨN ===
 Input: "Hôm nay thấy quán phở để tô đặc biệt 150k đầu menu, rồi mới đến tô thường 60k. Khách cứ gọi tô thường mà không thấy đắt. Nhớ đến Cialdini viết về contrast principle."
@@ -74,17 +79,47 @@ Output:
   "ngay_tao": "03/03/2026"
 }]
 
-Chỉ trả về JSON array thuần. Không markdown, không giải thích, không text nào ngoài JSON. Bắt đầu bằng [ và kết thúc bằng ]`;
+Luôn tuân thủ:
+- Tách input thành nhiều thẻ nếu có nhiều ý rõ ràng khác nhau.
+- Nếu thiếu bối cảnh VN → trả về "CẦN BỔ SUNG: ghi chú thiếu bối cảnh thực tế" trong field vi_du_vn.
+- Ngôn ngữ gần gũi, sắc bén, không sáo rỗng.
+Chỉ trả về JSON array thuần. Không markdown, không giải thích, không text nào ngoài JSON. Bắt đầu bằng [ và kết thúc bằng ].`;
+
+const SUGGEST_PROMPT = `Bạn là chuyên gia đánh giá Atomic Content cho Xưởng Tâm Lý Học.
+
+Atomic Content = mẩu nội dung nhỏ nhất, chỉ giải quyết DUY NHẤT một ý tưởng, đủ để sản xuất video 15-60 giây.
+
+Đọc ghi chú thô dưới đây và phân tích XEM CÒN THIẾU GÌ để có thể format thành Atomic Content chuẩn.
+
+Kiểm tra 5 điểm:
+1. Có nhiều hơn 1 ý không? → cần tách thành mấy thẻ?
+2. Bối cảnh thực tế VN có cụ thể không? (quán nào, ai, tình huống nào cụ thể)
+3. Câu cốt lõi có thể viết được 1 câu ≤20 từ không, hay ý quá mơ hồ?
+4. Có "điều bất ngờ" đảo lộn nhận thức không, hay chỉ là thông tin bình thường?
+5. Nguồn thuộc loại nào: "Tâm Lý Mua & Bán" / "Quan sát thực tế" / "Hook viral"?
+
+Trả về JSON object với cấu trúc:
+{
+  "so_the_du_kien": <số nguyên>,
+  "chat_luong_tong_the": "TỐT | KHÁ | CẦN BỔ SUNG",
+  "goi_y": ["gợi ý 1 cụ thể", "gợi ý 2 cụ thể", ...],
+  "diem_manh": "1-2 câu nêu điểm mạnh của ghi chú",
+  "canh_bao": "cảnh báo nếu ghi chú quá mơ hồ, hoặc '' nếu ổn"
+}
+
+Chỉ trả về JSON object thuần. Bắt đầu bằng { và kết thúc bằng }.`;
 
 function App() {
-  const [apiKey, setApiKey] = useState(localStorage.getItem("oai_key") || "");
+  const [apiKey, setApiKey]           = useState(localStorage.getItem("oai_key") || "");
   const [apiKeySaved, setApiKeySaved] = useState(!!localStorage.getItem("oai_key"));
-  const [input, setInput] = useState("");
-  const [cards, setCards] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [copied, setCopied] = useState(false);
+  const [input, setInput]             = useState("");
+  const [cards, setCards]             = useState([]);
+  const [loading, setLoading]         = useState(false);
+  const [analyzing, setAnalyzing]     = useState(false);
+  const [error, setError]             = useState("");
+  const [copied, setCopied]           = useState(false);
   const [editingCard, setEditingCard] = useState(null);
+  const [suggestion, setSuggestion]   = useState(null);
 
   const today = new Date().toLocaleDateString("vi-VN", {
     day: "2-digit", month: "2-digit", year: "numeric"
@@ -95,39 +130,68 @@ function App() {
     setApiKeySaved(true);
   };
 
+  const callOpenAI = async (systemPrompt, userContent, maxTokens = 2000) => {
+    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        temperature: 0.4,
+        max_tokens: maxTokens,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user",   content: userContent }
+        ]
+      })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    return data.choices?.[0]?.message?.content || "";
+  };
+
   const processInput = async () => {
     if (!input.trim()) return;
     if (!apiKey) { setError("Vui lòng nhập OpenAI API Key trước."); return; }
     setLoading(true);
     setError("");
     setCards([]);
+    setSuggestion(null);
 
     try {
-      const res = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`
-        },
-        body: JSON.stringify({
-          model: "gpt-4o-mini",
-          temperature: 0.5,
-          messages: [
-            { role: "system", content: SYSTEM_PROMPT },
-            { role: "user", content: `Ghi chú của tôi (ngày hôm nay: ${today}):\n\n${input}` }
-          ]
-        })
-      });
-
-      const data = await res.json();
-      if (data.error) throw new Error(data.error.message);
-      const text = data.choices?.[0]?.message?.content || "";
+      const text = await callOpenAI(
+        SYSTEM_PROMPT,
+        `Ghi chú của tôi (ngày hôm nay: ${today}):\n\n${input}`
+      );
       const clean = text.replace(/```json|```/g, "").trim();
       setCards(JSON.parse(clean));
     } catch (e) {
       setError(`Lỗi: ${e.message || "Thử lại hoặc kiểm tra API key."}`);
     }
     setLoading(false);
+  };
+
+  const analyzeInput = async () => {
+    if (!input.trim()) return;
+    if (!apiKey) { setError("Vui lòng nhập OpenAI API Key trước."); return; }
+    setAnalyzing(true);
+    setError("");
+    setSuggestion(null);
+
+    try {
+      const text = await callOpenAI(
+        SUGGEST_PROMPT,
+        `Ghi chú cần phân tích (ngày: ${today}):\n\n${input}`,
+        600
+      );
+      const clean = text.replace(/```json|```/g, "").trim();
+      setSuggestion(JSON.parse(clean));
+    } catch (e) {
+      setError(`Lỗi phân tích: ${e.message || "Thử lại."}`);
+    }
+    setAnalyzing(false);
   };
 
   const copyForSheet = () => {
@@ -140,33 +204,42 @@ function App() {
     setTimeout(() => setCopied(false), 2500);
   };
 
-  const updateCard = (idx, field, val) =>
+  const updateCard  = (idx, field, val) =>
     setCards(prev => prev.map((c, i) => i === idx ? { ...c, [field]: val } : c));
-  const deleteCard = (idx) =>
+  const deleteCard  = (idx) =>
     setCards(prev => prev.filter((_, i) => i !== idx));
 
   const nguonColor = (n) => {
     if (n?.includes("Quan sát")) return "bg-green-100 text-green-700 border-green-200";
-    if (n?.includes("Hook")) return "bg-purple-100 text-purple-700 border-purple-200";
+    if (n?.includes("Hook"))     return "bg-purple-100 text-purple-700 border-purple-200";
     return "bg-blue-100 text-blue-700 border-blue-200";
   };
   const nguonCollection = (n) => {
     if (n?.includes("Quan sát")) return "quan-sat-doi-thuc";
-    if (n?.includes("Hook")) return "mau-hook-viral";
+    if (n?.includes("Hook"))     return "mau-hook-viral";
     return "the-ghi-chu-xtlh";
   };
 
-  // Cảnh báo nếu vi_du_vn thiếu bối cảnh
-  const needsContext = (card) =>
-    card.vi_du_vn?.startsWith("CẦN BỔ SUNG");
+  const needsContext = (card) => card.vi_du_vn?.startsWith("CẦN BỔ SUNG");
+
+  const qualityColor = (q) => {
+    if (q === "TỐT")          return "bg-green-50 border-green-200 text-green-800";
+    if (q === "KHÁ")          return "bg-blue-50 border-blue-200 text-blue-800";
+    return "bg-orange-50 border-orange-200 text-orange-800";
+  };
+  const qualityIcon = (q) => {
+    if (q === "TỐT") return "✅";
+    if (q === "KHÁ") return "👍";
+    return "⚠️";
+  };
 
   const fields = [
-    { key: "ten_y_tuong", label: "Tên ý tưởng", hint: "3-7 từ", rows: 1 },
-    { key: "cau_cot_loi", label: "Câu cốt lõi", hint: "1 câu, cắt hết còn lại vẫn hiểu", rows: 2 },
-    { key: "giai_thich", label: "Giải thích", hint: "ừ đúng rồi — không phải ừ tôi hiểu rồi", rows: 3 },
-    { key: "vi_du_vn", label: "Ví dụ từ ghi chú", hint: "Bối cảnh Tuyến đã gặp", rows: 3 },
-    { key: "dieu_bat_ngo", label: "Điều bất ngờ", hint: "Đặt ly xuống mà nghe", rows: 2 },
-    { key: "dung_duoc_ngay", label: "Dùng được ngay", hint: "Không bắt đầu bằng Hãy/Bạn nên", rows: 2 },
+    { key: "ten_y_tuong",   label: "Tên ý tưởng",     hint: "3-7 từ, tên vũ khí",              rows: 1 },
+    { key: "cau_cot_loi",   label: "Câu cốt lõi",      hint: "1 câu ≤20 từ",                    rows: 2 },
+    { key: "giai_thich",    label: "Giải thích",        hint: "ừ đúng rồi — không phải ừ hiểu",  rows: 3 },
+    { key: "vi_du_vn",      label: "Ví dụ từ ghi chú", hint: "Bối cảnh Tuyến đã gặp",           rows: 3 },
+    { key: "dieu_bat_ngo",  label: "Điều bất ngờ",     hint: "Đặt ly xuống mà nghe",            rows: 2 },
+    { key: "dung_duoc_ngay",label: "Dùng được ngay",   hint: "Không Hãy.../Bạn nên...",         rows: 2 },
   ];
 
   return (
@@ -175,8 +248,11 @@ function App() {
 
         {/* Header */}
         <div className="mb-5">
-          <h1 className="text-xl font-bold text-gray-800">🧠 Trợ Lý Thẻ Tri Thức</h1>
-          <p className="text-gray-400 text-xs mt-1">Xưởng Tâm Lý Học · Paste ghi chú thô → nhận thẻ chuẩn → dán vào Sheet</p>
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-bold text-gray-800">⚛️ Trợ Lý Bài Viết Nguyên Tử</h1>
+            <span className="text-xs bg-indigo-100 text-indigo-600 font-semibold px-2 py-0.5 rounded-full">v3.0</span>
+          </div>
+          <p className="text-gray-400 text-xs mt-1">Xưởng Tâm Lý Học · Paste ghi chú thô → nhận Atomic Content chuẩn → dán vào Sheet</p>
         </div>
 
         {/* API Key */}
@@ -197,7 +273,7 @@ function App() {
               Lưu
             </button>
           </div>
-          <p className="text-xs text-gray-400 mt-1.5">Key lưu trên trình duyệt của bạn, chỉ gửi đến OpenAI</p>
+          <p className="text-xs text-gray-400 mt-1.5">Key lưu trên trình duyệt, chỉ gửi đến OpenAI</p>
         </div>
 
         {/* Input */}
@@ -205,31 +281,96 @@ function App() {
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Ghi chú thô của bạn
           </label>
-          <p className="text-xs text-gray-400 mb-2">Càng nhiều bối cảnh thực tế → thẻ càng sắc nét. Ghi nhiều ý một lần — AI tự tách thành nhiều thẻ.</p>
+          <p className="text-xs text-gray-400 mb-2">
+            Càng nhiều bối cảnh thực tế → thẻ càng sắc nét. Ghi nhiều ý một lần — AI tự tách thành nhiều thẻ Atomic Content riêng biệt.
+          </p>
           <textarea
             className="w-full border border-gray-200 rounded-lg p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-300"
             rows={6}
             placeholder={"Ví dụ:\n\"Hôm nay thấy quán phở để menu 150k-200k ở đầu. Đọc xuống thấy tô 80k tự nhiên thấy rẻ. Nhớ đến nguyên tắc neo giá trong Influence của Cialdini...\""}
             value={input}
-            onChange={e => setInput(e.target.value)}
+            onChange={e => { setInput(e.target.value); setSuggestion(null); }}
           />
-          <button
-            onClick={processInput}
-            disabled={loading || !input.trim() || !apiKey}
-            className="mt-3 w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 text-white font-medium py-2.5 rounded-lg transition text-sm"
-          >
-            {loading ? "⏳ Đang xử lý..." : "✨ Format thành thẻ tri thức"}
-          </button>
+
+          {/* Two action buttons */}
+          <div className="mt-3 flex gap-2">
+            <button
+              onClick={analyzeInput}
+              disabled={analyzing || loading || !input.trim() || !apiKey}
+              className="flex-1 bg-amber-50 hover:bg-amber-100 disabled:bg-gray-100 border border-amber-200 disabled:border-gray-200 text-amber-700 disabled:text-gray-400 font-medium py-2.5 rounded-lg transition text-sm"
+            >
+              {analyzing ? "⏳ Đang phân tích..." : "🔍 Phân tích & Gợi ý thiếu"}
+            </button>
+            <button
+              onClick={processInput}
+              disabled={loading || analyzing || !input.trim() || !apiKey}
+              className="flex-1 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 text-white font-medium py-2.5 rounded-lg transition text-sm"
+            >
+              {loading ? "⏳ Đang xử lý..." : "✨ Format → Atomic Content"}
+            </button>
+          </div>
+
           {error && (
             <div className="text-red-600 text-xs mt-2 bg-red-50 border border-red-200 p-2.5 rounded-lg">{error}</div>
           )}
         </div>
 
+        {/* Suggestion Panel */}
+        {suggestion && (
+          <div className={`rounded-xl border p-4 mb-4 ${qualityColor(suggestion.chat_luong_tong_the)}`}>
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-semibold">
+                {qualityIcon(suggestion.chat_luong_tong_the)} Phân tích ghi chú — {suggestion.chat_luong_tong_the}
+              </p>
+              <span className="text-xs font-medium opacity-70">
+                Dự kiến {suggestion.so_the_du_kien} thẻ Atomic Content
+              </span>
+            </div>
+
+            {suggestion.diem_manh && (
+              <p className="text-xs mb-2 opacity-80">
+                <strong>Điểm mạnh:</strong> {suggestion.diem_manh}
+              </p>
+            )}
+
+            {suggestion.goi_y?.length > 0 && (
+              <div className="mb-2">
+                <p className="text-xs font-semibold mb-1.5">Gợi ý bổ sung:</p>
+                <ul className="space-y-1">
+                  {suggestion.goi_y.map((g, i) => (
+                    <li key={i} className="text-xs flex gap-1.5">
+                      <span className="opacity-50 flex-shrink-0">→</span>
+                      <span>{g}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {suggestion.canh_bao && (
+              <div className="mt-2 bg-white bg-opacity-60 rounded-lg p-2 text-xs">
+                <strong>⚠️ Cảnh báo:</strong> {suggestion.canh_bao}
+              </div>
+            )}
+
+            <button
+              onClick={processInput}
+              disabled={loading || !input.trim() || !apiKey}
+              className="mt-3 w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 text-white font-medium py-2 rounded-lg transition text-sm"
+            >
+              {loading ? "⏳ Đang xử lý..." : "✨ Vẫn format ngay →"}
+            </button>
+          </div>
+        )}
+
         {/* Cards */}
         {cards.length > 0 && (
           <div>
             <div className="flex items-center justify-between mb-3">
-              <p className="text-sm font-semibold text-gray-700">{cards.length} thẻ — kiểm tra trước khi copy</p>
+              <div>
+                <p className="text-sm font-semibold text-gray-700">{cards.length} Atomic Content — kiểm tra trước khi copy</p>
+                <p className="text-xs text-gray-400 mt-0.5">Mỗi thẻ = 1 ý duy nhất độc lập</p>
+              </div>
               <button onClick={copyForSheet}
                 className="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
                 {copied ? "✅ Đã copy!" : "📋 Copy tất cả"}
@@ -249,7 +390,10 @@ function App() {
                 {/* Card header */}
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1 min-w-0 mr-3">
-                    <p className="font-semibold text-gray-800 text-sm">{card.ten_y_tuong}</p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-gray-400 font-medium">#{idx + 1}</span>
+                      <p className="font-semibold text-gray-800 text-sm">{card.ten_y_tuong}</p>
+                    </div>
                     <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium border ${nguonColor(card.nguon)}`}>
                         {card.nguon}
@@ -278,12 +422,13 @@ function App() {
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       {[
-                        ["📖 Giải thích", card.giai_thich],
+                        ["📖 Giải thích",        card.giai_thich],
                         ["🇻🇳 Ví dụ từ ghi chú", card.vi_du_vn],
-                        ["😮 Điều bất ngờ", card.dieu_bat_ngo],
-                        ["⚡ Dùng ngay", card.dung_duoc_ngay],
+                        ["😮 Điều bất ngờ",       card.dieu_bat_ngo],
+                        ["⚡ Dùng ngay",           card.dung_duoc_ngay],
                       ].map(([label, val]) => (
-                        <div key={label} className={`rounded-lg p-2.5 border ${label.includes("Ví dụ") && needsContext(card) ? "bg-orange-50 border-orange-200" : "bg-gray-50 border-gray-100"}`}>
+                        <div key={label}
+                          className={`rounded-lg p-2.5 border ${label.includes("Ví dụ") && needsContext(card) ? "bg-orange-50 border-orange-200" : "bg-gray-50 border-gray-100"}`}>
                           <p className="text-xs text-gray-400 font-medium mb-1">{label}</p>
                           <p className="text-xs text-gray-700 leading-relaxed">{val}</p>
                         </div>
@@ -338,7 +483,7 @@ function App() {
                 1. Click ô <strong>A</strong> của dòng trống đầu tiên trong Sheet<br/>
                 2. Nhấn <strong>Cmd+V</strong> (Mac) hoặc Ctrl+V (Windows)<br/>
                 3. Dữ liệu tự điền vào đúng 8 cột A→H ✅<br/>
-                <span className="text-amber-500 mt-1 block">Cột I→L để trống — EC2 tự điền lúc 23:00</span>
+                <span className="text-amber-500 mt-1 block">Cột I→P để trống — EC2 tự điền lúc 23:00</span>
               </p>
             </div>
           </div>
