@@ -136,6 +136,7 @@ function App() {
   const [apiKey, setApiKey]           = useState(localStorage.getItem("oai_key") || "");
   const [apiKeySaved, setApiKeySaved] = useState(!!localStorage.getItem("oai_key"));
   const [input, setInput]             = useState("");
+  const [charCount, setCharCount] = useState(0);
   const [cards, setCards]             = useState([]);
   const [loading, setLoading]         = useState(false);
   const [analyzing, setAnalyzing]     = useState(false);
@@ -317,14 +318,38 @@ function App() {
           <p className="text-xs text-gray-400 mb-2">
             Càng nhiều bối cảnh thực tế → thẻ càng sắc nét. Ghi nhiều ý một lần — AI tự tách thành nhiều thẻ Atomic Content riêng biệt.
           </p>
+          <div className="relative">
           <textarea
-            className="w-full border border-gray-200 rounded-lg p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-300"
+            className="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-300 resize-y min-h-[120px]"
             rows={6}
-            placeholder={"Ví dụ:\n\"Hôm nay thấy quán phở để menu 150k-200k ở đầu. Đọc xuống thấy tô 80k tự nhiên thấy rẻ. Nhớ đến nguyên tắc neo giá trong Influence của Cialdini...\""}
             value={input}
-            onChange={e => { setInput(e.target.value); setSuggestion(null); setAnalysisResult(null);   // ← Reset khi gõ lại
-              }}
+            onChange={e => { 
+              const value = e.target.value;
+              setInput(value); 
+              setSuggestion(null); 
+              setAnalysisResult(null); 
+              setCharCount(value.length);
+            }}
+            placeholder="Dump ghi chú thô, quan sát, khoảnh khắc thực tế... (tốt nhất 400-800 ký tự)"
           />
+
+          {/* Đếm ngược ký tự - góc dưới phải textarea */}
+          <div className={`absolute bottom-2 right-3 text-xs font-medium ${
+            charCount > 900 ? 'text-red-600' : 
+            charCount > 700 ? 'text-yellow-600' : 
+            'text-gray-500'
+          }`}>
+            {charCount} / 900
+            {charCount > 900 && <span className="ml-1 font-bold">– Rút gọn!</span>}
+          </div>
+        </div>
+
+        {/* Cảnh báo đỏ khi vượt 900 */}
+        {charCount > 900 && (
+          <p className="mt-1 text-xs text-red-600 font-medium bg-red-50 p-1.5 rounded border border-red-200">
+            Ghi chú quá dài → model dễ tách sai. Hãy chắt lọc thành 1-2 ý chính. Rác vào → rác ra.
+          </p>
+        )}
 
           {/* Two action buttons */}
           <div className="mt-3 flex gap-2">
@@ -335,10 +360,14 @@ function App() {
             >
               {analyzing ? "⏳ Đang phân tích..." : "🔍 Phân tích & Gợi ý thiếu"}
             </button>
-            <button
+            <button 
               onClick={processInput}
-              disabled={loading || analyzing || !input.trim() || !apiKey}
-              className="flex-1 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 text-white font-medium py-2.5 rounded-lg transition text-sm"
+              disabled={loading || charCount > 1000 || !input.trim() || !apiKey}
+              className={`flex-1 py-2.5 rounded-lg text-white font-medium transition text-sm ${
+                loading || charCount > 1000 || !input.trim() || !apiKey
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-indigo-600 hover:bg-indigo-700'
+              }`}
             >
               {loading ? "⏳ Đang xử lý..." : "✨ Format → Atomic Content"}
             </button>
@@ -474,20 +503,20 @@ function App() {
                 {/* Edit mode */}
                 {editingCard === idx && (
                   <div className="space-y-3">
-                    {fields.map(({ key, label, hint, rows }) => (
-                      <div key={key}>
-                        <label className="text-xs font-medium text-gray-600 flex justify-between mb-1">
-                          <span>{label}</span>
-                          <span className="text-gray-400 font-normal italic">{hint}</span>
-                        </label>
-                        <textarea
-                          className="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-300 resize-none"
-                          rows={rows}
-                          value={card[key] || ""}
-                          onChange={e => updateCard(idx, key, e.target.value)}
-                        />
-                      </div>
-                    ))}
+                  {fields.map(({ key, label, hint, rows }) => (
+                  <div key={key}>
+                    <label className="text-xs font-medium text-gray-600 flex justify-between mb-1">
+                      <span>{label}</span>
+                      <span className="text-gray-400 font-normal italic">{hint}</span>
+                    </label>
+                    <textarea
+                      className="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-300 resize-none"
+                      rows={rows}
+                      value={card[key] || ""}
+                      onChange={e => updateCard(idx, key, e.target.value)}
+                    />
+                  </div>
+                ))}
                     <div>
                       <label className="text-xs font-medium text-gray-600 mb-1 block">
                         Nguồn → quyết định collection Qdrant
