@@ -23,7 +23,11 @@ Atomic Content là mẩu nội dung nhỏ nhất, độc lập, chỉ giải quy
 • Tính đơn nhất: Một vấn đề, một giải pháp hoặc một thông điệp.
 • Tính linh hoạt: Có thể đứng một mình (post ngắn, thẻ tri thức) hoặc lắp ghép thành kịch bản video/script dài hơn.
 • Tối ưu chuyển đổi: Giúp người xem hấp thụ giá trị nhanh trong 15-60 giây.
-Nếu input chứa 2+ ý rõ ràng khác nhau → PHẢI tách thành nhiều thẻ riêng biệt, mỗi thẻ = 1 ý duy nhất.
+Nếu input chứa 2+ ý rõ ràng khác nhau → PHẢI tách thành nhiều thẻ riêng biệt, mỗi thẻ = 1 ý duy nhất. Luôn ưu tiên tách tối đa nếu ghi chú có:  
+• Nhiều khoảnh khắc / ví dụ khác nhau  
+• So sánh hai cách làm (Mỹ vs Nhật, cũ vs mới)  
+• Kết luận + lý do riêng biệt  
+Mỗi thẻ phải độc lập hoàn toàn, không lặp ý.
 
 === VAI TRÒ CỦA BẠN ===
 Tuyến ghi chú thô từ trải nghiệm thực tế, quan sát, đọc sách. Bạn KHÔNG sáng tác — bạn làm sạch, cấu trúc hóa, và làm sắc nét những gì Tuyến đã sống và đã nghĩ. Kho tri thức này phải mang dấu vân tay thực tế của Tuyến, không phải nội dung AI tự nghĩ ra.
@@ -120,6 +124,7 @@ function App() {
   const [copied, setCopied]           = useState(false);
   const [editingCard, setEditingCard] = useState(null);
   const [suggestion, setSuggestion]   = useState(null);
+  const [analysisResult, setAnalysisResult] = useState(null);
 
   const today = new Date().toLocaleDateString("vi-VN", {
     day: "2-digit", month: "2-digit", year: "numeric"
@@ -161,19 +166,26 @@ function App() {
     setSuggestion(null);
 
     try {
+      let userPrompt = `Ghi chú của tôi (ngày hôm nay: ${today}):\n\n${input}`;
+      
+      // ← PHẦN KẾT NỐI 2 NÚT
+      if (analysisResult && analysisResult.so_the_du_kien) {
+        userPrompt = `Theo phân tích trước đây, nên tách thành ${analysisResult.so_the_du_kien} thẻ Atomic Content. Hãy thực hiện đúng như vậy.\n\n` + userPrompt;
+      }
+
       const text = await callOpenAI(
         SYSTEM_PROMPT,
-        `Ghi chú của tôi (ngày hôm nay: ${today}):\n\n${input}`
+        userPrompt
       );
       const clean = text.replace(/```json|```/g, "").trim();
       setCards(JSON.parse(clean));
-    } catch (e) {
+      } catch (e) {
       setError(`Lỗi: ${e.message || "Thử lại hoặc kiểm tra API key."}`);
-    }
+      }
     setLoading(false);
   };
 
-  const analyzeInput = async () => {
+    const analyzeInput = async () => {
     if (!input.trim()) return;
     if (!apiKey) { setError("Vui lòng nhập OpenAI API Key trước."); return; }
     setAnalyzing(true);
@@ -187,7 +199,9 @@ function App() {
         600
       );
       const clean = text.replace(/```json|```/g, "").trim();
-      setSuggestion(JSON.parse(clean));
+      const parsed = JSON.parse(clean);
+      setSuggestion(parsed);
+      setAnalysisResult(parsed);   // ← DÒNG QUAN TRỌNG: lưu để Format dùng
     } catch (e) {
       setError(`Lỗi phân tích: ${e.message || "Thử lại."}`);
     }
@@ -289,7 +303,8 @@ function App() {
             rows={6}
             placeholder={"Ví dụ:\n\"Hôm nay thấy quán phở để menu 150k-200k ở đầu. Đọc xuống thấy tô 80k tự nhiên thấy rẻ. Nhớ đến nguyên tắc neo giá trong Influence của Cialdini...\""}
             value={input}
-            onChange={e => { setInput(e.target.value); setSuggestion(null); }}
+            onChange={e => { setInput(e.target.value); setSuggestion(null); setAnalysisResult(null);   // ← Reset khi gõ lại
+              }}
           />
 
           {/* Two action buttons */}
