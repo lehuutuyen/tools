@@ -52,21 +52,22 @@ Câu này phải đứng được một mình như quote trên mạng xã hội.
 Bài viết nguyên tử đầy đủ. Logic Hook → Idea → Insight — không phải form cứng, là cách tư duy.
 
   HOOK (ĐỀ):
-  Câu mở phải tạo được 1 trong 3 cảm giác:
-  (a) Nghịch lý — điều nghe có vẻ sai nhưng lại đúng. Ví dụ: "Tôi đóng cửa 1 năm và đó là quyết định kinh doanh tốt nhất."
-  (b) Sốc nhận thức — lật ngược cách nghĩ quen thuộc. Ví dụ: "Vấn đề bán hàng của bạn không nằm ở phòng bán hàng."
-  (c) Nhận ra bản thân — người đọc thấy đây là chuyện của mình. Ví dụ: "Bạn đã từng làm nhiều thứ cùng lúc mà không ra kết quả?"
-  Cấu trúc hook hiệu quả: câu ngắn + ngắt dòng + câu tiếp gây tension.
+  Câu mở phải tạo sự chú ý. Một số cách hiệu quả (không bắt buộc chọn 1):
+  - Quan sát thú vị từ thực tế
+  - Nghịch lý — điều nghe có vẻ sai nhưng lại đúng
+  - Tuyên bố mạnh, đi ngược kỳ vọng
+  - Tình huống người đọc đã từng sống qua
+  Cấu trúc thường hiệu quả: câu ngắn + ngắt dòng + câu tiếp gây tension.
   TUYỆT ĐỐI KHÔNG mở bằng: "Hôm nay tôi muốn chia sẻ", "Theo nghiên cứu", hay bất kỳ câu sáo rỗng nào.
 
   IDEA (THỰC + LUẬN):
   Triển khai duy nhất 1 ý trung tâm. Mỗi đoạn chỉ serve ý trung tâm đó — không được introduce ý phụ mới.
-  Ví dụ PHẢI cụ thể đến mức đặt tên người/địa điểm được. Không phải "một khách hàng" — phải là "chị Hoa bán mỹ phẩm ở Vũng Tàu".
-  Nếu ghi chú có bối cảnh thực tế → giữ nguyên, làm sắc nét hơn. KHÔNG tự bịa bối cảnh.
-  2–3 đoạn. Mỗi đoạn: luận điểm → lý do → dẫn chứng cụ thể.
+  Nếu ghi chú có ví dụ cụ thể (tên người, địa điểm, tình huống) → giữ nguyên và làm sắc nét hơn.
+  Nếu ghi chú KHÔNG có ví dụ cụ thể → KHÔNG bịa. Giữ nguyên mức độ trừu tượng của ghi chú.
+  2–3 đoạn. Mỗi đoạn: luận điểm → lý do → dẫn chứng (nếu có trong ghi chú).
 
   INSIGHT (KẾT):
-  1–2 câu. Đây là Principle — nguyên tắc rút ra từ toàn bài.
+  1–2 câu. Đây là Principle — nguyên tắc tổng quát rút ra từ toàn bài.
   Phải đứng được một mình như quote. Phải là câu đóng lại ý trung tâm.
   KHÔNG tóm tắt lại bài. KHÔNG introduce ý mới ở đây.
   Nếu có ý mới muốn thêm vào đoạn kết → đó là thẻ khác, không phải thẻ này.
@@ -74,13 +75,19 @@ Bài viết nguyên tử đầy đủ. Logic Hook → Idea → Insight — khôn
 Độ dài: 150–400 từ. Câu ngắn. Đoạn ngắn (2–4 câu/đoạn). Không dùng bullet point trong noi_dung.
 Giọng: direct, thực chiến, không hoa mỹ — như Tuyến đang kể chuyện cho người bạn làm kinh doanh nghe.
 
+=== TUYỆT ĐỐI KHÔNG (anti-hallucination) ===
+- KHÔNG thêm thông tin mới không có trong ghi chú
+- KHÔNG thêm số liệu, nghiên cứu, trích dẫn không có trong ghi chú
+- KHÔNG bịa ví dụ, tên người, địa điểm, câu chuyện
+- KHÔNG thay đổi ý nghĩa hoặc lập trường của ghi chú gốc
+
 === KIỂM TRA BẮT BUỘC TRƯỚC KHI OUTPUT ===
-□ Hook có tạo được nghịch lý / sốc nhận thức / nhận ra bản thân không?
+□ Hook có tạo được sự chú ý không? (quan sát thú vị / nghịch lý / tuyên bố mạnh)
 □ Mỗi thẻ chỉ có đúng 1 ý tưởng trung tâm?
 □ Mỗi đoạn trong bài có đang serve ý trung tâm đó không? (nếu bỏ 1 đoạn mà ý trung tâm không đổi → đoạn đó thừa, xóa đi)
-□ Đoạn kết có phải Insight/Principle không? (không phải tóm tắt, không phải ý mới)
+□ Đoạn kết có phải Principle/Insight không? (không phải tóm tắt, không phải ý mới)
 □ cau_cot_loi đứng được một mình như quote?
-□ Ví dụ trong noi_dung có tên người/địa điểm cụ thể?
+□ Có ví dụ/số liệu/câu chuyện nào trong bài KHÔNG có trong ghi chú gốc không? (nếu có → xóa đi)
 □ Giọng văn có phải của Tuyến không (direct, không hoa mỹ)?
 
 === FORMAT OUTPUT ===
@@ -337,7 +344,7 @@ function App() {
                   {[
                     { key: 'ten_the',     label: 'ten_the',     hint: '3–7 từ, tên vũ khí',           rows: 1 },
                     { key: 'cau_cot_loi', label: 'cau_cot_loi', hint: '1 câu, tối đa 20 từ',          rows: 2 },
-                    { key: 'noi_dung',    label: 'noi_dung',    hint: '200–500 từ, Đề–Thực–Luận–Kết', rows: 8 },
+                    { key: 'noi_dung',    label: 'noi_dung',    hint: '150–400 từ, Hook–Idea–Insight', rows: 8 },
                   ].map(({ key, label, hint, rows }) => (
                     <div key={key} className="mb-3">
                       <label className="text-xs font-medium text-gray-600 flex justify-between mb-1">
