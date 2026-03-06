@@ -3,277 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Bài Viết Nguyên Tử — Lê Hữu Tuyến</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg:        #0c0c0c;
-    --bg-card:   #141414;
-    --bg-panel:  #1a1a1a;
-    --border:    #2a2a2a;
-    --border-hi: #383838;
-    --amber:     #f59e0b;
-    --amber-dim: #92400e;
-    --amber-glow:#fbbf24;
-    --text:      #e8e8e8;
-    --text-dim:  #888;
-    --text-muted:#555;
-    --green:     #22c55e;
-    --red:       #ef4444;
-    --blue:      #60a5fa;
-    --radius:    10px;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    line-height: 1.6;
-    min-height: 100vh;
-  }
-
-  /* Subtle grid texture */
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image:
-      linear-gradient(rgba(255,255,255,.015) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,.015) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  #app { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; padding: 24px 16px 80px; }
-
-  /* ── HEADER ── */
-  .header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
-  .header-left h1 { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--text); letter-spacing: -0.3px; }
-  .header-left h1 em { font-style: italic; color: var(--amber); }
-  .header-left p  { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); margin-top: 3px; letter-spacing: 0.5px; }
-  .version-badge  { font-family: 'JetBrains Mono', monospace; font-size: 10px; background: var(--amber-dim); color: var(--amber); padding: 3px 8px; border-radius: 4px; letter-spacing: 1px; }
-
-  /* ── PANELS ── */
-  .panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }
-  .panel-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
-  .panel-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-  /* ── API KEY ── */
-  .key-row { display: flex; gap: 8px; }
-  .key-input {
-    flex: 1; background: var(--bg-panel); border: 1px solid var(--border);
-    color: var(--text); border-radius: 6px; padding: 9px 12px;
-    font-family: 'JetBrains Mono', monospace; font-size: 12px;
-    outline: none; transition: border-color .2s;
-  }
-  .key-input:focus { border-color: var(--amber-dim); }
-  .key-input::placeholder { color: var(--text-muted); }
-  .key-hint { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
-  .key-hint a { color: var(--amber-dim); text-decoration: none; }
-  .key-hint a:hover { color: var(--amber); }
-  .saved-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--green); margin-left: 4px; vertical-align: middle; box-shadow: 0 0 6px var(--green); }
-
-  /* ── BUTTONS ── */
-  .btn { border: none; cursor: pointer; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-weight: 500; transition: all .15s; }
-  .btn-sm  { font-size: 12px; padding: 8px 14px; }
-  .btn-save { background: var(--bg-panel); color: var(--text-dim); border: 1px solid var(--border); }
-  .btn-save:hover { border-color: var(--amber-dim); color: var(--amber); }
-  .btn-primary {
-    width: 100%; padding: 13px; font-size: 15px; font-weight: 600;
-    background: var(--amber); color: #000;
-    border-radius: 8px; letter-spacing: -0.2px;
-    position: relative; overflow: hidden;
-  }
-  .btn-primary:hover:not(:disabled) { background: var(--amber-glow); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(245,158,11,.25); }
-  .btn-primary:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; transform: none; box-shadow: none; }
-  .btn-copy { background: #1a2a1a; color: var(--green); border: 1px solid #2a3a2a; }
-  .btn-copy:hover { background: #1f321f; border-color: var(--green); }
-  .btn-copy-all {
-    width: 100%; padding: 12px; font-size: 14px; font-weight: 600;
-    background: transparent; color: var(--green); border: 1px solid #2a3a2a;
-    border-radius: 8px; margin-top: 4px;
-  }
-  .btn-copy-all:hover { background: #0d1a0d; border-color: var(--green); }
-  .btn-delete { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
-  .btn-delete:hover { color: var(--red); border-color: var(--red); }
-  .btn-edit { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
-  .btn-edit:hover { color: var(--blue); border-color: var(--blue); }
-
-  /* ── SEGMENT CONTROLS ── */
-  .seg-group { display: flex; gap: 6px; flex-wrap: wrap; }
-  .seg {
-    font-size: 12px; padding: 6px 12px; border-radius: 6px; cursor: pointer;
-    border: 1px solid var(--border); background: var(--bg-panel);
-    color: var(--text-dim); transition: all .15s; font-weight: 400;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .seg:hover { border-color: var(--border-hi); color: var(--text); }
-  .seg.active { background: rgba(245,158,11,.12); border-color: var(--amber-dim); color: var(--amber); font-weight: 500; }
-  .seg-label { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
-
-  /* ── TEXTAREA ── */
-  .note-area {
-    width: 100%; background: var(--bg-panel); border: 1px solid var(--border);
-    color: var(--text); border-radius: 8px; padding: 12px;
-    font-family: 'DM Sans', sans-serif; font-size: 14px; line-height: 1.7;
-    resize: vertical; min-height: 120px; outline: none; transition: border-color .2s;
-  }
-  .note-area:focus { border-color: var(--amber-dim); }
-  .note-area::placeholder { color: var(--text-muted); }
-  .note-meta { display: flex; justify-content: space-between; margin-top: 6px; }
-  .char-count { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); }
-  .note-tip { font-size: 11px; color: var(--text-muted); font-style: italic; }
-
-  /* ── LOADING ── */
-  .loading-bar {
-    height: 2px; background: var(--border); border-radius: 2px;
-    margin: 16px 0; overflow: hidden;
-  }
-  .loading-bar-inner {
-    height: 100%; background: linear-gradient(90deg, transparent, var(--amber), transparent);
-    animation: shimmer 1.2s infinite;
-    width: 40%;
-  }
-  @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(350%); } }
-  .loading-text { text-align: center; font-size: 12px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
-
-  /* ── ERROR ── */
-  .error-box { background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.25); border-radius: 8px; padding: 12px; color: #fca5a5; font-size: 13px; margin-top: 12px; }
-
-  /* ── CARDS ── */
-  .cards-header { display: flex; justify-content: space-between; align-items: center; margin: 24px 0 14px; }
-  .cards-header h2 { font-family: 'DM Serif Display', serif; font-size: 18px; }
-  .cards-header p  { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-
-  .card {
-    background: var(--bg-card); border: 1px solid var(--border);
-    border-radius: var(--radius); margin-bottom: 16px;
-    animation: fadeUp .3s ease both;
-  }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-  .card-head {
-    display: flex; justify-content: space-between; align-items: flex-start;
-    padding: 14px 16px 12px; border-bottom: 1px solid var(--border);
-  }
-  .card-num {
-    font-family: 'JetBrains Mono', monospace; font-size: 10px;
-    color: var(--amber); background: rgba(245,158,11,.1);
-    padding: 2px 7px; border-radius: 4px; margin-right: 8px; flex-shrink: 0;
-  }
-  .card-ten { font-family: 'DM Serif Display', serif; font-size: 16px; color: var(--text); flex: 1; }
-  .card-actions { display: flex; gap: 6px; flex-shrink: 0; }
-
-  .card-body { padding: 14px 16px; }
-
-  /* cau_cot_loi block */
-  .cau-block {
-    background: rgba(245,158,11,.07); border: 1px solid rgba(245,158,11,.2);
-    border-radius: 8px; padding: 12px 14px; margin-bottom: 12px;
-    position: relative;
-  }
-  .cau-block::before {
-    content: '"';
-    position: absolute; top: -8px; left: 10px;
-    font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--amber-dim);
-    line-height: 1;
-  }
-  .field-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--amber-dim); margin-bottom: 5px; }
-  .cau-text { font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.5; }
-
-  /* noi_dung block */
-  .noidung-block {
-    background: var(--bg-panel); border: 1px solid var(--border);
-    border-radius: 8px; padding: 12px 14px;
-  }
-  .noidung-text {
-    font-size: 13.5px; color: #ccc; line-height: 1.8;
-    white-space: pre-wrap; word-break: break-word;
-  }
-  .noidung-fade { max-height: 120px; overflow: hidden; position: relative; }
-  .noidung-fade::after {
-    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 40px;
-    background: linear-gradient(transparent, var(--bg-panel));
-  }
-  .show-more-btn {
-    background: none; border: none; cursor: pointer;
-    font-size: 11px; color: var(--text-muted); margin-top: 6px;
-    font-family: 'JetBrains Mono', monospace; letter-spacing: 0.5px;
-    padding: 4px 0;
-  }
-  .show-more-btn:hover { color: var(--amber); }
-
-  /* Tags */
-  .card-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
-  .tag {
-    font-family: 'JetBrains Mono', monospace; font-size: 10px;
-    padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border);
-    background: var(--bg-panel);
-  }
-  .tag-nguon { color: #93c5fd; border-color: #1e3a5f; background: rgba(59,130,246,.08); }
-  .tag-chude { color: #a3e635; border-color: #2a3a1e; background: rgba(132,204,22,.08); }
-  .tag-copy  { cursor: pointer; color: var(--text-muted); }
-  .tag-copy:hover { color: var(--amber); border-color: var(--amber-dim); }
-
-  /* ── EDIT MODE ── */
-  .edit-field { margin-bottom: 12px; }
-  .edit-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
-  .edit-input, .edit-textarea, .edit-select {
-    width: 100%; background: var(--bg-panel); border: 1px solid var(--border);
-    color: var(--text); border-radius: 6px; padding: 9px 12px;
-    font-family: 'DM Sans', sans-serif; font-size: 13px;
-    outline: none; transition: border-color .2s;
-  }
-  .edit-input:focus, .edit-textarea:focus, .edit-select:focus { border-color: var(--amber-dim); }
-  .edit-textarea { resize: vertical; line-height: 1.7; min-height: 140px; }
-  .edit-select option { background: var(--bg-panel); }
-
-  /* ── COPY PANEL ── */
-  .copy-panel {
-    background: rgba(34,197,94,.05); border: 1px solid #1a3a1a;
-    border-radius: var(--radius); padding: 14px 16px; margin-top: 8px;
-  }
-  .copy-guide { font-size: 12px; color: #4ade80; margin-bottom: 10px; line-height: 1.6; }
-  .copy-guide strong { color: var(--green); }
-  .copy-guide code { font-family: 'JetBrains Mono', monospace; font-size: 10px; background: rgba(34,197,94,.1); padding: 1px 5px; border-radius: 3px; }
-
-  /* ── BOTTOM DIVIDER ── */
-  .section-div { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
-
-  /* ── SUCCESS FLASH ── */
-  .copied-flash { animation: flashGreen .5s ease; }
-  @keyframes flashGreen { 0% { background: rgba(34,197,94,.15); } 100% { background: var(--bg-card); } }
-
-  /* ── FOOTER ── */
-  .footer { text-align: center; margin-top: 40px; }
-  .footer p { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 0.5px; line-height: 1.8; }
-  .footer em { color: var(--amber-dim); font-style: normal; }
-
-  /* ── SCROLL ── */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-  /* Mobile */
-  @media (max-width: 480px) {
-    .header { flex-direction: column; gap: 8px; align-items: flex-start; }
-    .card-ten { font-size: 14px; }
-    .seg { font-size: 11px; padding: 5px 10px; }
-  }
-</style>
+<title>⚛️ Bài Viết Nguyên Tử v5 — Lê Hữu Tuyến</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-<div id="app"></div>
+<body class="bg-gray-50">
+<div id="root"></div>
 
-<script>
+<script type="text/babel">
+const { useState, useRef } = React;
+
 // ═══════════════════════════════════════════════════════════════
-//  SYSTEM PROMPT — Bài Viết Nguyên Tử v5
-//  Schema v3: ten_the + cau_cot_loi + noi_dung
-//  Brand: Lê Hữu Tuyến · Copywriting & Direct Response
+//  SYSTEM PROMPT — Schema v3: ten_the + cau_cot_loi + noi_dung
 // ═══════════════════════════════════════════════════════════════
 const SYSTEM_PROMPT = `Bạn là trợ lý format Bài Viết Nguyên Tử cho Lê Hữu Tuyến — Copywriter & Direct Response Marketer, 10+ năm kinh nghiệm.
 
@@ -285,7 +28,7 @@ Atomic Content = mẩu nội dung nhỏ nhất, chỉ giải quyết DUY NHẤT 
 - 1 ghi chú, 1 ý → trả về 1 thẻ
 - 1 ghi chú, nhiều ý RÕ RÀNG KHÁC NHAU → tách thành nhiều thẻ, mỗi thẻ = 1 ý độc lập
 - Tối đa 3 thẻ mỗi lần
-- Nếu ghi chú quá lộn xộn (>3 ý) → CHỌN 3 ý rõ nhất, bỏ phần còn lại
+- Nếu ghi chú quá lộn xộn (hơn 3 ý) → chọn 3 ý rõ nhất, bỏ phần còn lại
 - Mỗi thẻ phải độc lập hoàn toàn — đọc thẻ này không cần biết thẻ kia
 
 Tách khi ghi chú có:
@@ -296,7 +39,8 @@ Tách khi ghi chú có:
 === 3 FIELDS BẮT BUỘC ===
 
 1. ten_the
-3–7 từ. Đặt như tên một "vũ khí" — đọc tên là biết dùng để làm gì. Dùng "–" nếu cần: "Neo Giá – Số Đầu Tiên", "Câu Hỏi Sau Chốt Đơn"
+3–7 từ. Đặt như tên một "vũ khí" — đọc tên là biết dùng để làm gì.
+Dùng "–" nếu cần: "Neo Giá – Số Đầu Tiên", "Câu Hỏi Sau Chốt Đơn"
 KHÔNG đặt tên mơ hồ như "Kỹ Thuật Hay" hay "Insight Thú Vị".
 
 2. cau_cot_loi
@@ -305,15 +49,15 @@ Tiêu chí vàng: nếu cắt hết mọi thứ, chỉ còn câu này — ngư�
 Câu này phải đứng được một mình như quote trên mạng xã hội.
 
 3. noi_dung
-Bài viết nguyên tử đầy đủ. Cấu trúc Đề–Thực–Luận–Kết — NHƯNG đây là LOGIC TƯ DUY, không phải form cứng:
+Bài viết nguyên tử đầy đủ. Cấu trúc Đề–Thực–Luận–Kết — đây là LOGIC TƯ DUY, không phải form cứng.
   ĐỀ: Câu mở không sáo rỗng. Phải khiến người đọc muốn đọc tiếp — quan sát kỳ lạ, nghịch lý, hoặc tình huống người đọc đã từng sống qua.
   THỰC: Mô tả vấn đề cụ thể. Ví dụ PHẢI cụ thể đến mức đặt tên người/địa điểm được. Không phải "một khách hàng" — phải là "chị Hoa bán mỹ phẩm ở Vũng Tàu". Nếu ghi chú có bối cảnh thực tế → giữ nguyên, làm sắc nét hơn. KHÔNG tự bịa bối cảnh.
   LUẬN: 2–3 điểm. Mỗi điểm: luận điểm → lý do → dẫn chứng cụ thể. Không dump lý thuyết dày đặc.
   KẾT: 1–2 câu. Câu kết phải đứng được một mình.
 
-Độ dài: 200–500 từ. Câu ngắn. Đoạn ngắn (2–4 câu/đoạn). Không bullet point trong noi_dung.
+Độ dài: 200–500 từ. Câu ngắn. Đoạn ngắn (2–4 câu/đoạn). Không dùng bullet point trong noi_dung.
 Giọng: direct, thực chiến, không hoa mỹ — như Tuyến đang kể chuyện cho người bạn làm kinh doanh nghe.
-TUYỆT ĐỐI KHÔNG: câu mở "Hôm nay tôi muốn chia sẻ", không "Theo nghiên cứu", không ngôn ngữ học thuật.
+TUYỆT ĐỐI KHÔNG: "Hôm nay tôi muốn chia sẻ", không "Theo nghiên cứu", không ngôn ngữ học thuật.
 
 === KIỂM TRA TRƯỚC KHI OUTPUT ===
 □ Mỗi thẻ chỉ có đúng 1 ý tưởng trung tâm?
@@ -323,414 +67,408 @@ TUYỆT ĐỐI KHÔNG: câu mở "Hôm nay tôi muốn chia sẻ", không "Theo 
 □ Câu mở của noi_dung có phải đọc xong muốn đọc tiếp không?
 
 === FORMAT OUTPUT ===
-Chỉ trả về JSON array thuần. Không markdown, không giải thích.
-Bắt đầu bằng [ và kết thúc bằng ].
-Ví dụ cấu trúc:
-[
-  {
-    "ten_the": "...",
-    "cau_cot_loi": "...",
-    "noi_dung": "..."
-  }
-]`;
+Chỉ trả về JSON array thuần. Không markdown, không giải thích, không text nào ngoài JSON.
+Bắt đầu bằng [ và kết thúc bằng ].`;
 
-// ═══════════════════════════════════════════════════════════════
-//  CONFIG
-// ═══════════════════════════════════════════════════════════════
+// ── CONFIG ──────────────────────────────────────────────────────
 const NGUON_OPTIONS = [
-  { value: 'Chuyên Môn', label: 'Chuyên Môn', collection: 'kien-thuc-chuyen-mon' },
-  { value: 'Sách',       label: 'Sách',        collection: 'sach-hoc-tap' },
-  { value: 'Quan Sát',  label: 'Quan Sát',    collection: 'quan-sat-thuc-te' },
+  { value: 'Chuyên Môn', collection: 'kien-thuc-chuyen-mon', color: 'bg-blue-100 text-blue-700 border-blue-200' },
+  { value: 'Sách',       collection: 'sach-hoc-tap',         color: 'bg-purple-100 text-purple-700 border-purple-200' },
+  { value: 'Quan Sát',  collection: 'quan-sat-thuc-te',     color: 'bg-green-100 text-green-700 border-green-200' },
 ];
 const CHUDE_OPTIONS = [
-  { value: 'C1-Copywriting & Direct Response', label: 'C1 · Copywriting' },
-  { value: 'C2-Tâm Lý Thuyết Phục',           label: 'C2 · Tâm Lý' },
-  { value: 'C3-Hệ Thống Kinh Doanh Solo',      label: 'C3 · Hệ Thống' },
+  { value: 'C1-Copywriting & Direct Response', short: 'C1 · Copywriting' },
+  { value: 'C2-Tâm Lý Thuyết Phục',           short: 'C2 · Tâm Lý' },
+  { value: 'C3-Hệ Thống Kinh Doanh Solo',      short: 'C3 · Hệ Thống' },
 ];
 
-// ═══════════════════════════════════════════════════════════════
-//  STATE
-// ═══════════════════════════════════════════════════════════════
-let state = {
-  apiKey:     localStorage.getItem('ant_key') || '',
-  keySaved:   !!localStorage.getItem('ant_key'),
-  nguon:      localStorage.getItem('sel_nguon') || 'Chuyên Môn',
-  chuDe:      localStorage.getItem('sel_chude') || 'C1-Copywriting & Direct Response',
-  input:      '',
-  cards:      [],
-  loading:    false,
-  error:      '',
-  copied:     null,       // card index or 'all'
-  expanded:   {},         // { idx: bool }
-  editing:    null,       // card index
-  editData:   {},
-};
+// ── APP ─────────────────────────────────────────────────────────
+function App() {
+  const [apiKey,   setApiKey]   = useState(localStorage.getItem('ant_key') || '');
+  const [keySaved, setKeySaved] = useState(!!localStorage.getItem('ant_key'));
+  const [nguon,    setNguon]    = useState(localStorage.getItem('sel_nguon') || 'Chuyên Môn');
+  const [chuDe,    setChuDe]    = useState(localStorage.getItem('sel_chude') || 'C1-Copywriting & Direct Response');
+  const [input,    setInput]    = useState('');
+  const [cards,    setCards]    = useState([]);
+  const [loading,  setLoading]  = useState(false);
+  const [error,    setError]    = useState('');
+  const [copied,   setCopied]   = useState(null);
+  const [expanded, setExpanded] = useState({});
+  const [editing,  setEditing]  = useState(null);
+  const [editData, setEditData] = useState({});
+  const resultsRef = useRef(null);
 
-function setState(patch) {
-  Object.assign(state, patch);
-  render();
-}
+  const today      = new Date().toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const charCount  = input.length;
 
-// ═══════════════════════════════════════════════════════════════
-//  API CALL
-// ═══════════════════════════════════════════════════════════════
-async function generate() {
-  if (!state.input.trim()) return;
-  if (!state.apiKey) { setState({ error: 'Nhập Anthropic API Key trước.' }); return; }
+  const saveKey = () => {
+    localStorage.setItem('ant_key', apiKey);
+    setKeySaved(true);
+  };
 
-  setState({ loading: true, error: '', cards: [], copied: null });
+  const generate = async () => {
+    if (!input.trim()) return;
+    if (!apiKey) { setError('Nhập Anthropic API Key trước.'); return; }
+    setLoading(true); setError(''); setCards([]); setCopied(null);
 
-  const today = new Date().toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
-  const userMsg = `Nguồn: ${state.nguon}\nChủ đề: ${state.chuDe}\nNgày: ${today}\n\nGhi chú của tôi:\n${state.input.trim()}`;
+    const userMsg = `Nguồn: ${nguon}\nChủ đề: ${chuDe}\nNgày: ${today}\n\nGhi chú của tôi:\n${input.trim()}`;
 
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': state.apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5',
-        max_tokens: 4000,
-        system: SYSTEM_PROMPT,
-        messages: [{ role: 'user', content: userMsg }],
-      }),
-    });
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5',
+          max_tokens: 4000,
+          system: SYSTEM_PROMPT,
+          messages: [{ role: 'user', content: userMsg }],
+        }),
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error.message);
 
-    const data = await res.json();
-    if (data.error) throw new Error(data.error.message);
+      const raw    = data.content?.[0]?.text || '[]';
+      const clean  = raw.replace(/```json|```/g, '').trim();
+      const parsed = JSON.parse(clean);
+      if (!Array.isArray(parsed) || parsed.length === 0) throw new Error('Không parse được kết quả. Thử lại.');
 
-    const raw = data.content?.[0]?.text || '[]';
-    const clean = raw.replace(/```json|```/g, '').trim();
-    const cards = JSON.parse(clean);
+      setCards(parsed.map(c => ({ ...c, nguon, chu_de: chuDe })));
+      setExpanded({}); setEditing(null);
+      setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+    } catch (e) {
+      setError(e.message || 'Lỗi không xác định. Kiểm tra API Key và thử lại.');
+    }
+    setLoading(false);
+  };
 
-    if (!Array.isArray(cards) || cards.length === 0) throw new Error('Không parse được kết quả. Thử lại.');
+  const buildRow  = (c) => [c.ten_the, c.cau_cot_loi, c.noi_dung, c.nguon, c.chu_de, 'pending'].join('\t');
+  const copyCards = (key) => {
+    const list = key === 'all' ? cards : [cards[key]];
+    navigator.clipboard.writeText(list.map(buildRow).join('\n'));
+    setCopied(key);
+    setTimeout(() => setCopied(null), 2500);
+  };
 
-    setState({
-      loading: false,
-      cards: cards.map(c => ({ ...c, nguon: state.nguon, chu_de: state.chuDe })),
-      expanded: {},
-      editing: null,
-    });
-    // scroll to results
-    setTimeout(() => document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' }), 100);
+  const startEdit  = (idx) => { setEditing(idx); setEditData({ ...cards[idx] }); };
+  const cancelEdit = ()    => { setEditing(null); setEditData({}); };
+  const saveEdit   = (idx) => {
+    setCards(prev => prev.map((c, i) => i === idx ? { ...editData } : c));
+    setEditing(null); setEditData({});
+  };
+  const delCard = (idx) => setCards(prev => prev.filter((_, i) => i !== idx));
 
-  } catch (e) {
-    setState({ loading: false, error: e.message || 'Lỗi không xác định. Kiểm tra API Key.' });
-  }
-}
+  const selectNguon = (v) => { localStorage.setItem('sel_nguon', v); setNguon(v); };
+  const selectChuDe = (v) => { localStorage.setItem('sel_chude', v); setChuDe(v); };
+  const nguonInfo   = (v) => NGUON_OPTIONS.find(n => n.value === v) || NGUON_OPTIONS[0];
 
-// ═══════════════════════════════════════════════════════════════
-//  COPY HELPERS
-// ═══════════════════════════════════════════════════════════════
-function buildSheetRow(card) {
-  // Columns: B=ten_the, C=cau_cot_loi, D=noi_dung, E=nguon, F=chu_de, G=status
-  return [card.ten_the, card.cau_cot_loi, card.noi_dung, card.nguon, card.chu_de, 'pending'].join('\t');
-}
+  return (
+    <div className="min-h-screen bg-gray-50 p-4">
+      <div className="max-w-2xl mx-auto">
 
-function copyCard(idx) {
-  const c = idx === 'all' ? state.cards : [state.cards[idx]];
-  const text = c.map(buildSheetRow).join('\n');
-  navigator.clipboard.writeText(text).then(() => {
-    setState({ copied: idx });
-    setTimeout(() => setState({ copied: null }), 2200);
-  });
-}
-
-function copyField(text, id) {
-  navigator.clipboard.writeText(text).then(() => {
-    const el = document.getElementById(id);
-    if (el) { el.classList.add('copied-flash'); setTimeout(() => el.classList.remove('copied-flash'), 500); }
-  });
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  EDIT HELPERS
-// ═══════════════════════════════════════════════════════════════
-function startEdit(idx) {
-  setState({ editing: idx, editData: { ...state.cards[idx] } });
-}
-function cancelEdit() {
-  setState({ editing: null, editData: {} });
-}
-function saveEdit(idx) {
-  const newCards = [...state.cards];
-  newCards[idx] = { ...state.editData };
-  setState({ cards: newCards, editing: null, editData: {} });
-}
-function deleteCard(idx) {
-  const newCards = state.cards.filter((_, i) => i !== idx);
-  setState({ cards: newCards });
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  RENDER
-// ═══════════════════════════════════════════════════════════════
-function render() {
-  document.getElementById('app').innerHTML = template();
-  bindEvents();
-}
-
-function template() {
-  return `
-  <div>
-    ${renderHeader()}
-    ${renderKeyPanel()}
-    ${renderMetaPanel()}
-    ${renderInputPanel()}
-    ${state.loading ? renderLoading() : ''}
-    ${state.error   ? renderError()   : ''}
-    ${state.cards.length > 0 ? renderResults() : ''}
-    ${renderFooter()}
-  </div>`;
-}
-
-function renderHeader() {
-  return `<div class="header">
-    <div class="header-left">
-      <h1>Bài Viết <em>Nguyên Tử</em></h1>
-      <p>LÊ HỮU TUYẾN · COPYWRITING & DIRECT RESPONSE</p>
-    </div>
-    <span class="version-badge">v5.0</span>
-  </div>`;
-}
-
-function renderKeyPanel() {
-  const saved = state.keySaved;
-  return `<div class="panel">
-    <div class="panel-label">API Key${saved ? `<span class="saved-dot"></span>` : ''}</div>
-    <div class="key-row">
-      <input id="apiKeyInput" class="key-input" type="password"
-        placeholder="sk-ant-api03-..."
-        value="${escHtml(state.apiKey)}" />
-      <button class="btn btn-sm btn-save" onclick="saveKey()">Lưu</button>
-    </div>
-    <p class="key-hint">
-      Key lưu trên trình duyệt, chỉ gửi thẳng đến Anthropic.
-      <a href="https://console.anthropic.com/settings/keys" target="_blank">Lấy key →</a>
-    </p>
-  </div>`;
-}
-
-function renderMetaPanel() {
-  const nguonHTML = NGUON_OPTIONS.map(n =>
-    `<button class="seg ${state.nguon === n.value ? 'active' : ''}" onclick="setNguon('${n.value}')">${n.label}</button>`
-  ).join('');
-  const chuDeHTML = CHUDE_OPTIONS.map(c =>
-    `<button class="seg ${state.chuDe === c.value ? 'active' : ''}" onclick="setChuDe('${JSON.stringify(c.value).slice(1,-1)}')">${c.label}</button>`
-  ).join('');
-  return `<div class="panel">
-    <div class="panel-label">Phân loại thẻ</div>
-    <p class="seg-label">Nguồn</p>
-    <div class="seg-group" style="margin-bottom:14px">${nguonHTML}</div>
-    <p class="seg-label">Chủ đề</p>
-    <div class="seg-group">${chuDeHTML}</div>
-  </div>`;
-}
-
-function renderInputPanel() {
-  const len = state.input.length;
-  const disabled = !state.input.trim() || !state.apiKey || state.loading;
-  return `<div class="panel">
-    <div class="panel-label">Ghi chú thô</div>
-    <textarea id="noteInput" class="note-area"
-      placeholder="Ghi bất cứ thứ gì — gạch đầu dòng, đoạn lộn xộn, câu chưa xong... Nếu có nhiều ý thì cứ viết hết, AI tự tách thành từng thẻ riêng (tối đa 3 thẻ).&#10;&#10;Ví dụ: Hôm nay xem video quán phở để tô 150k đầu menu, 60k ở dưới. Khách cứ gọi 60k mà không thấy đắt..."
-      onInput="onInput(this)">${escHtml(state.input)}</textarea>
-    <div class="note-meta">
-      <span class="char-count">${len} ký tự</span>
-      <span class="note-tip">Nhiều bối cảnh thực tế → thẻ càng sắc nét</span>
-    </div>
-    <button class="btn btn-primary" style="margin-top:12px" ${disabled ? 'disabled' : ''} onclick="generate()">
-      ${state.loading ? '...' : '⚛ Tạo Thẻ Tri Thức'}
-    </button>
-  </div>`;
-}
-
-function renderLoading() {
-  return `<div style="padding:4px 0">
-    <div class="loading-bar"><div class="loading-bar-inner"></div></div>
-    <p class="loading-text">Claude đang format thẻ tri thức...</p>
-  </div>`;
-}
-
-function renderError() {
-  return `<div class="error-box">⚠ ${escHtml(state.error)}</div>`;
-}
-
-function renderResults() {
-  const n = state.cards.length;
-  const allCopied = state.copied === 'all';
-  return `<div id="results">
-    <hr class="section-div">
-    <div class="cards-header">
-      <div>
-        <h2>${n} Thẻ${n > 1 ? ' Tri Thức' : ' Tri Thức'}</h2>
-        <p>Review → chỉnh nếu cần → copy vào Sheet KHO</p>
-      </div>
-    </div>
-    ${state.cards.map((card, idx) => renderCard(card, idx)).join('')}
-    ${n > 0 ? renderCopyPanel(allCopied) : ''}
-  </div>`;
-}
-
-function renderCard(card, idx) {
-  const isEditing  = state.editing === idx;
-  const isExpanded = state.expanded[idx];
-  const cardCopied = state.copied === idx;
-  const nguonInfo  = NGUON_OPTIONS.find(n => n.value === card.nguon) || NGUON_OPTIONS[0];
-
-  if (isEditing) return renderCardEdit(card, idx);
-
-  const longContent = card.noi_dung && card.noi_dung.length > 300;
-
-  return `<div class="card ${cardCopied ? 'copied-flash' : ''}" id="card-${idx}">
-    <div class="card-head">
-      <span class="card-num">#${idx+1}</span>
-      <span class="card-ten">${escHtml(card.ten_the)}</span>
-      <div class="card-actions">
-        <button class="btn btn-sm btn-edit" onclick="startEdit(${idx})">Sửa</button>
-        <button class="btn btn-sm btn-delete" onclick="deleteCard(${idx})">✕</button>
-      </div>
-    </div>
-    <div class="card-body">
-      <div class="cau-block" id="cau-${idx}">
-        <div class="field-label">câu cốt lõi</div>
-        <div class="cau-text">${escHtml(card.cau_cot_loi)}</div>
-      </div>
-      <div class="noidung-block">
-        <div class="field-label" style="margin-bottom:8px">nội dung</div>
-        <div class="noidung-text ${longContent && !isExpanded ? 'noidung-fade' : ''}" id="nd-${idx}">
-          ${escHtml(card.noi_dung)}
+        {/* ── Header ── */}
+        <div className="mb-5">
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-bold text-gray-800">⚛️ Bài Viết Nguyên Tử</h1>
+            <span className="text-xs bg-indigo-100 text-indigo-600 font-semibold px-2 py-0.5 rounded-full">v5.0</span>
+          </div>
+          <p className="text-gray-400 text-xs mt-1">
+            Lê Hữu Tuyến · Copywriting & Direct Response · Paste ghi chú thô → nhận thẻ tri thức → dán vào Sheet
+          </p>
         </div>
-        ${longContent ? `<button class="show-more-btn" onclick="toggleExpand(${idx})">
-          ${isExpanded ? '▲ Thu gọn' : '▼ Đọc đầy đủ'}
-        </button>` : ''}
-      </div>
-      <div class="card-tags">
-        <span class="tag tag-nguon">${escHtml(card.nguon)}</span>
-        <span class="tag tag-chude">${escHtml(card.chu_de?.split('-')[0] || 'C1')}</span>
-        <span class="tag tag-copy" onclick="copyCard(${idx})" title="Copy thẻ này">
-          ${cardCopied ? '✓ Copied' : '📋 Copy thẻ này'}
-        </span>
+
+        {/* ── API Key ── */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-1.5">
+            Anthropic API Key {keySaved && <span className="text-green-500 ml-1">✓ Đã lưu</span>}
+          </label>
+          <div className="flex gap-2">
+            <input
+              type="password"
+              className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+              placeholder="sk-ant-api03-..."
+              value={apiKey}
+              onChange={e => { setApiKey(e.target.value); setKeySaved(false); }}
+            />
+            <button onClick={saveKey}
+              className="bg-indigo-100 hover:bg-indigo-200 text-indigo-700 text-sm font-medium px-4 py-2 rounded-lg transition whitespace-nowrap">
+              Lưu
+            </button>
+          </div>
+          <p className="text-xs text-gray-400 mt-1.5">
+            Key lưu trên trình duyệt, chỉ gửi thẳng đến Anthropic.{' '}
+            <a href="https://console.anthropic.com/settings/keys" target="_blank"
+               className="text-indigo-400 hover:underline">Lấy key tại đây →</a>
+          </p>
+        </div>
+
+        {/* ── Phân loại ── */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4">
+          <p className="text-xs font-medium text-gray-600 mb-3">
+            Phân loại thẻ <span className="text-gray-400 font-normal">(chọn trước khi tạo)</span>
+          </p>
+
+          <p className="text-xs text-gray-400 mb-1.5">Nguồn</p>
+          <div className="flex gap-2 flex-wrap mb-3">
+            {NGUON_OPTIONS.map(n => (
+              <button key={n.value} onClick={() => selectNguon(n.value)}
+                className={`text-xs px-3 py-1.5 rounded-lg border font-medium transition ${
+                  nguon === n.value
+                    ? 'bg-indigo-600 text-white border-indigo-600'
+                    : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-indigo-300'
+                }`}>
+                {n.value}
+              </button>
+            ))}
+          </div>
+
+          <p className="text-xs text-gray-400 mb-1.5">Chủ đề</p>
+          <div className="flex gap-2 flex-wrap">
+            {CHUDE_OPTIONS.map(c => (
+              <button key={c.value} onClick={() => selectChuDe(c.value)}
+                className={`text-xs px-3 py-1.5 rounded-lg border font-medium transition ${
+                  chuDe === c.value
+                    ? 'bg-indigo-600 text-white border-indigo-600'
+                    : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-indigo-300'
+                }`}>
+                {c.short}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Input ── */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Ghi chú thô</label>
+          <p className="text-xs text-gray-400 mb-2">
+            Ghi bất cứ thứ gì — gạch đầu dòng, đoạn lộn xộn, câu chưa xong. Nhiều ý một lần → AI tự tách thành từng thẻ riêng (tối đa 3).
+          </p>
+          <div className="relative">
+            <textarea
+              className="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-300 resize-y min-h-[130px]"
+              rows={6}
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              placeholder="Ví dụ: Hôm nay xem video quán phở để tô 150k đầu menu, 60k ở dưới. Khách cứ gọi 60k mà không thấy đắt. Nhớ Cialdini viết về contrast principle..."
+            />
+            <div className={`absolute bottom-2 right-2.5 text-xs font-medium ${
+              charCount > 900 ? 'text-red-500' : charCount > 700 ? 'text-amber-500' : 'text-gray-400'
+            }`}>
+              {charCount} / 900{charCount > 900 && <span className="ml-1 font-bold">– Rút gọn!</span>}
+            </div>
+          </div>
+
+          {charCount > 900 && (
+            <p className="mt-1.5 text-xs text-red-600 bg-red-50 border border-red-200 p-2 rounded-lg">
+              Ghi chú quá dài → AI dễ tách sai. Chắt lọc còn 1–2 ý chính. Rác vào → rác ra.
+            </p>
+          )}
+
+          <button
+            onClick={generate}
+            disabled={loading || !input.trim() || !apiKey}
+            className={`mt-3 w-full py-2.5 rounded-lg text-white font-semibold text-sm transition ${
+              loading || !input.trim() || !apiKey
+                ? 'bg-gray-300 cursor-not-allowed'
+                : 'bg-indigo-600 hover:bg-indigo-700'
+            }`}>
+            {loading ? '⏳ Claude đang format thẻ...' : '⚛️ Tạo Thẻ Tri Thức'}
+          </button>
+
+          {error && (
+            <div className="mt-2 text-red-600 text-xs bg-red-50 border border-red-200 p-2.5 rounded-lg">
+              ⚠️ {error}
+            </div>
+          )}
+        </div>
+
+        {/* ── Results ── */}
+        {cards.length > 0 && (
+          <div ref={resultsRef}>
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <p className="text-sm font-semibold text-gray-700">
+                  {cards.length} Thẻ Tri Thức — kiểm tra trước khi copy
+                </p>
+                <p className="text-xs text-gray-400 mt-0.5">Mỗi thẻ = 1 ý duy nhất độc lập</p>
+              </div>
+              <button onClick={() => copyCards('all')}
+                className="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition whitespace-nowrap">
+                {copied === 'all' ? '✅ Đã copy!' : '📋 Copy tất cả'}
+              </button>
+            </div>
+
+            {cards.map((card, idx) => {
+              const ni     = nguonInfo(card.nguon);
+              const isEdit = editing === idx;
+              const isExp  = expanded[idx];
+              const long   = card.noi_dung?.length > 350;
+              const chuDeShort = CHUDE_OPTIONS.find(c => c.value === card.chu_de)?.short || card.chu_de;
+
+              if (isEdit) return (
+                <div key={idx} className="bg-white rounded-xl border border-indigo-300 p-4 mb-4">
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="text-xs bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full font-medium">
+                      #{idx+1} Đang chỉnh sửa
+                    </span>
+                  </div>
+
+                  {[
+                    { key: 'ten_the',     label: 'ten_the',     hint: '3–7 từ, tên vũ khí',           rows: 1 },
+                    { key: 'cau_cot_loi', label: 'cau_cot_loi', hint: '1 câu, tối đa 20 từ',          rows: 2 },
+                    { key: 'noi_dung',    label: 'noi_dung',    hint: '200–500 từ, Đề–Thực–Luận–Kết', rows: 8 },
+                  ].map(({ key, label, hint, rows }) => (
+                    <div key={key} className="mb-3">
+                      <label className="text-xs font-medium text-gray-600 flex justify-between mb-1">
+                        <span>{label}</span>
+                        <span className="text-gray-400 font-normal italic">{hint}</span>
+                      </label>
+                      {rows === 1
+                        ? <input
+                            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-300"
+                            value={editData[key] || ''}
+                            onChange={e => setEditData(p => ({ ...p, [key]: e.target.value }))} />
+                        : <textarea
+                            className="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-300 resize-y"
+                            rows={rows}
+                            value={editData[key] || ''}
+                            onChange={e => setEditData(p => ({ ...p, [key]: e.target.value }))} />
+                      }
+                    </div>
+                  ))}
+
+                  <div className="mb-3">
+                    <label className="text-xs font-medium text-gray-600 mb-1 block">nguon</label>
+                    <select className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-indigo-300"
+                      value={editData.nguon || 'Chuyên Môn'}
+                      onChange={e => setEditData(p => ({ ...p, nguon: e.target.value }))}>
+                      {NGUON_OPTIONS.map(n => (
+                        <option key={n.value} value={n.value}>{n.value} → {n.collection}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="mb-4">
+                    <label className="text-xs font-medium text-gray-600 mb-1 block">chu_de</label>
+                    <select className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-indigo-300"
+                      value={editData.chu_de || chuDe}
+                      onChange={e => setEditData(p => ({ ...p, chu_de: e.target.value }))}>
+                      {CHUDE_OPTIONS.map(c => (
+                        <option key={c.value} value={c.value}>{c.short}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <button onClick={() => saveEdit(idx)}
+                      className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2 rounded-lg transition">
+                      ✓ Lưu chỉnh sửa
+                    </button>
+                    <button onClick={cancelEdit}
+                      className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-medium py-2 rounded-lg transition">
+                      Huỷ
+                    </button>
+                  </div>
+                </div>
+              );
+
+              return (
+                <div key={idx} className="bg-white rounded-xl border border-gray-200 p-4 mb-4">
+                  {/* Header */}
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1 min-w-0 mr-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-gray-400 font-medium">#{idx+1}</span>
+                        <p className="font-semibold text-gray-800 text-sm">{card.ten_the}</p>
+                      </div>
+                      <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium border ${ni.color}`}>
+                          {card.nguon}
+                        </span>
+                        <span className="text-xs text-gray-400">→ {ni.collection}</span>
+                        <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                          {chuDeShort}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex gap-1.5 flex-shrink-0">
+                      <button onClick={() => startEdit(idx)}
+                        className="text-xs text-indigo-500 px-2.5 py-1 rounded-lg border border-indigo-200 hover:bg-indigo-50 transition">
+                        Sửa
+                      </button>
+                      <button onClick={() => delCard(idx)}
+                        className="text-xs text-red-400 px-2.5 py-1 rounded-lg border border-red-200 hover:bg-red-50 transition">
+                        Xóa
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* cau_cot_loi */}
+                  <div className="bg-indigo-50 rounded-lg p-2.5 border border-indigo-100 mb-2">
+                    <p className="text-xs text-indigo-400 font-semibold mb-1">💡 Câu cốt lõi</p>
+                    <p className="text-sm text-gray-800 font-medium leading-snug">{card.cau_cot_loi}</p>
+                  </div>
+
+                  {/* noi_dung */}
+                  <div className="bg-gray-50 rounded-lg p-2.5 border border-gray-100">
+                    <p className="text-xs text-gray-400 font-semibold mb-1.5">📝 Nội dung</p>
+                    <p className={`text-xs text-gray-700 leading-relaxed whitespace-pre-wrap ${long && !isExp ? 'line-clamp-6' : ''}`}>
+                      {card.noi_dung}
+                    </p>
+                    {long && (
+                      <button
+                        onClick={() => setExpanded(p => ({ ...p, [idx]: !isExp }))}
+                        className="mt-1.5 text-xs text-indigo-500 hover:text-indigo-700 font-medium transition">
+                        {isExp ? '▲ Thu gọn' : '▼ Đọc đầy đủ'}
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Copy this card */}
+                  <div className="flex justify-end mt-2.5">
+                    <button onClick={() => copyCards(idx)}
+                      className="text-xs text-gray-500 hover:text-green-600 border border-gray-200 hover:border-green-300 px-3 py-1 rounded-lg transition">
+                      {copied === idx ? '✅ Đã copy thẻ này' : '📋 Copy thẻ này'}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Copy all button */}
+            <button onClick={() => copyCards('all')}
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition mb-4 text-sm">
+              {copied === 'all' ? '✅ Đã copy! Vào Sheet paste vào ô B dòng trống.' : '📋 Copy tất cả → Paste vào Google Sheet'}
+            </button>
+
+            {/* Paste guide */}
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-6">
+              <p className="text-xs font-semibold text-amber-800 mb-1.5">Cách paste vào Sheet KHO:</p>
+              <p className="text-xs text-amber-700 leading-relaxed">
+                1. Click ô <strong>B</strong> của dòng trống đầu tiên trong Sheet<br/>
+                2. Nhấn <strong>Ctrl+V</strong> (Windows) hoặc <strong>Cmd+V</strong> (Mac)<br/>
+                3. Dữ liệu tự điền vào đúng cột B→G ✅<br/>
+                <span className="text-amber-500 mt-1 block">Cột H trở đi để trống — EC2 tự điền lúc 02:00 AM</span>
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Footer */}
+        <p className="text-center text-xs text-gray-300 pb-6">
+          claude-haiku-4-5 · text-embedding-3-small · Qdrant<br/>
+          "Viết nhỏ mỗi ngày. Lưu đúng cấu trúc. Để AI nhân lên."
+        </p>
+
       </div>
     </div>
-  </div>`;
+  );
 }
 
-function renderCardEdit(card, idx) {
-  const nguonOpts = NGUON_OPTIONS.map(n =>
-    `<option value="${n.value}" ${state.editData.nguon === n.value ? 'selected' : ''}>${n.label} → ${n.collection}</option>`
-  ).join('');
-  const chuDeOpts = CHUDE_OPTIONS.map(c =>
-    `<option value="${c.value}" ${state.editData.chu_de === c.value ? 'selected' : ''}>${c.label}</option>`
-  ).join('');
-
-  return `<div class="card" id="card-${idx}" style="border-color:#383838">
-    <div class="card-head">
-      <span class="card-num">#${idx+1}</span>
-      <span class="card-ten" style="color:var(--text-muted)">Đang chỉnh...</span>
-      <div class="card-actions">
-        <button class="btn btn-sm btn-copy" onclick="saveEdit(${idx})">Lưu</button>
-        <button class="btn btn-sm btn-delete" onclick="cancelEdit()">Huỷ</button>
-      </div>
-    </div>
-    <div class="card-body">
-      <div class="edit-field">
-        <div class="edit-label">ten_the</div>
-        <input class="edit-input" value="${escHtml(state.editData.ten_the || '')}" oninput="editField('ten_the', this.value)" />
-      </div>
-      <div class="edit-field">
-        <div class="edit-label">cau_cot_loi — 1 câu, tối đa 20 từ</div>
-        <input class="edit-input" value="${escHtml(state.editData.cau_cot_loi || '')}" oninput="editField('cau_cot_loi', this.value)" />
-      </div>
-      <div class="edit-field">
-        <div class="edit-label">noi_dung</div>
-        <textarea class="edit-textarea" oninput="editField('noi_dung', this.value)">${escHtml(state.editData.noi_dung || '')}</textarea>
-      </div>
-      <div class="edit-field">
-        <div class="edit-label">nguon</div>
-        <select class="edit-select" onchange="editField('nguon', this.value)">${nguonOpts}</select>
-      </div>
-      <div class="edit-field">
-        <div class="edit-label">chu_de</div>
-        <select class="edit-select" onchange="editField('chu_de', this.value)">${chuDeOpts}</select>
-      </div>
-    </div>
-  </div>`;
-}
-
-function renderCopyPanel(allCopied) {
-  return `<div class="copy-panel">
-    <div class="copy-guide">
-      <strong>Cách paste vào Google Sheet (Sheet KHO):</strong><br>
-      1. Click vào ô <code>B</code> của dòng trống đầu tiên<br>
-      2. Nhấn <strong>Ctrl+V</strong> (hoặc Cmd+V)<br>
-      3. Dữ liệu tự điền vào cột B→G ✓<br>
-      <span style="color:var(--text-muted)">Cột H trở đi để trống — EC2 tự điền lúc 02:00 AM</span>
-    </div>
-    <button class="btn btn-copy-all" onclick="copyCard('all')">
-      ${allCopied ? '✓ Đã copy! Vào Sheet paste ngay.' : `📋 Copy tất cả ${state.cards.length > 1 ? state.cards.length + ' thẻ' : '1 thẻ'} → Google Sheet`}
-    </button>
-  </div>`;
-}
-
-function renderFooter() {
-  return `<div class="footer">
-    <p>
-      <em>atomic-writer</em> · Lê Hữu Tuyến<br>
-      claude-haiku-4-5 · text-embedding-3-small · Qdrant<br>
-      "Viết nhỏ mỗi ngày. Lưu đúng cấu trúc. Để AI nhân lên."
-    </p>
-  </div>`;
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  EVENT BINDING (gắn sau mỗi render vì innerHTML)
-// ═══════════════════════════════════════════════════════════════
-function bindEvents() {
-  // textarea sync (cần bind lại vì innerHTML)
-  const ta = document.getElementById('noteInput');
-  if (ta) {
-    ta.value = state.input; // đồng bộ lại value
-    ta.addEventListener('input', function() {
-      state.input = this.value;
-      const mc = document.querySelector('.char-count');
-      if (mc) mc.textContent = this.value.length + ' ký tự';
-    });
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  GLOBAL HANDLERS (onclick trong HTML string)
-// ═══════════════════════════════════════════════════════════════
-window.saveKey     = ()  => { const v = document.getElementById('apiKeyInput')?.value || ''; localStorage.setItem('ant_key', v); setState({ apiKey: v, keySaved: !!v }); };
-window.setNguon    = (v) => { localStorage.setItem('sel_nguon', v); setState({ nguon: v }); };
-window.setChuDe    = (v) => { localStorage.setItem('sel_chude', v); setState({ chuDe: v }); };
-window.onInput     = (el) => { state.input = el.value; };
-window.generate    = generate;
-window.copyCard    = copyCard;
-window.startEdit   = startEdit;
-window.cancelEdit  = cancelEdit;
-window.saveEdit    = saveEdit;
-window.deleteCard  = deleteCard;
-window.editField   = (key, val) => { state.editData[key] = val; };
-window.toggleExpand = (idx) => { state.expanded = { ...state.expanded, [idx]: !state.expanded[idx] }; render(); };
-
-// ═══════════════════════════════════════════════════════════════
-//  UTILS
-// ═══════════════════════════════════════════════════════════════
-function escHtml(str) {
-  if (!str) return '';
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════════════════════════
-render();
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
 </body>
 </html>
