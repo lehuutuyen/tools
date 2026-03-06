@@ -3,560 +3,734 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Trợ Lý Bài Viết Nguyên Tử v3.0 — Xưởng Tâm Lý Học</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-<script src="https://cdn.tailwindcss.com"></script>
+<title>Bài Viết Nguyên Tử — Lê Hữu Tuyến</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0c0c0c;
+    --bg-card:   #141414;
+    --bg-panel:  #1a1a1a;
+    --border:    #2a2a2a;
+    --border-hi: #383838;
+    --amber:     #f59e0b;
+    --amber-dim: #92400e;
+    --amber-glow:#fbbf24;
+    --text:      #e8e8e8;
+    --text-dim:  #888;
+    --text-muted:#555;
+    --green:     #22c55e;
+    --red:       #ef4444;
+    --blue:      #60a5fa;
+    --radius:    10px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* Subtle grid texture */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.015) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  #app { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; padding: 24px 16px 80px; }
+
+  /* ── HEADER ── */
+  .header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+  .header-left h1 { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--text); letter-spacing: -0.3px; }
+  .header-left h1 em { font-style: italic; color: var(--amber); }
+  .header-left p  { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); margin-top: 3px; letter-spacing: 0.5px; }
+  .version-badge  { font-family: 'JetBrains Mono', monospace; font-size: 10px; background: var(--amber-dim); color: var(--amber); padding: 3px 8px; border-radius: 4px; letter-spacing: 1px; }
+
+  /* ── PANELS ── */
+  .panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }
+  .panel-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+  .panel-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* ── API KEY ── */
+  .key-row { display: flex; gap: 8px; }
+  .key-input {
+    flex: 1; background: var(--bg-panel); border: 1px solid var(--border);
+    color: var(--text); border-radius: 6px; padding: 9px 12px;
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    outline: none; transition: border-color .2s;
+  }
+  .key-input:focus { border-color: var(--amber-dim); }
+  .key-input::placeholder { color: var(--text-muted); }
+  .key-hint { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+  .key-hint a { color: var(--amber-dim); text-decoration: none; }
+  .key-hint a:hover { color: var(--amber); }
+  .saved-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--green); margin-left: 4px; vertical-align: middle; box-shadow: 0 0 6px var(--green); }
+
+  /* ── BUTTONS ── */
+  .btn { border: none; cursor: pointer; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-weight: 500; transition: all .15s; }
+  .btn-sm  { font-size: 12px; padding: 8px 14px; }
+  .btn-save { background: var(--bg-panel); color: var(--text-dim); border: 1px solid var(--border); }
+  .btn-save:hover { border-color: var(--amber-dim); color: var(--amber); }
+  .btn-primary {
+    width: 100%; padding: 13px; font-size: 15px; font-weight: 600;
+    background: var(--amber); color: #000;
+    border-radius: 8px; letter-spacing: -0.2px;
+    position: relative; overflow: hidden;
+  }
+  .btn-primary:hover:not(:disabled) { background: var(--amber-glow); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(245,158,11,.25); }
+  .btn-primary:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-copy { background: #1a2a1a; color: var(--green); border: 1px solid #2a3a2a; }
+  .btn-copy:hover { background: #1f321f; border-color: var(--green); }
+  .btn-copy-all {
+    width: 100%; padding: 12px; font-size: 14px; font-weight: 600;
+    background: transparent; color: var(--green); border: 1px solid #2a3a2a;
+    border-radius: 8px; margin-top: 4px;
+  }
+  .btn-copy-all:hover { background: #0d1a0d; border-color: var(--green); }
+  .btn-delete { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+  .btn-delete:hover { color: var(--red); border-color: var(--red); }
+  .btn-edit { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+  .btn-edit:hover { color: var(--blue); border-color: var(--blue); }
+
+  /* ── SEGMENT CONTROLS ── */
+  .seg-group { display: flex; gap: 6px; flex-wrap: wrap; }
+  .seg {
+    font-size: 12px; padding: 6px 12px; border-radius: 6px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--bg-panel);
+    color: var(--text-dim); transition: all .15s; font-weight: 400;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .seg:hover { border-color: var(--border-hi); color: var(--text); }
+  .seg.active { background: rgba(245,158,11,.12); border-color: var(--amber-dim); color: var(--amber); font-weight: 500; }
+  .seg-label { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
+
+  /* ── TEXTAREA ── */
+  .note-area {
+    width: 100%; background: var(--bg-panel); border: 1px solid var(--border);
+    color: var(--text); border-radius: 8px; padding: 12px;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; line-height: 1.7;
+    resize: vertical; min-height: 120px; outline: none; transition: border-color .2s;
+  }
+  .note-area:focus { border-color: var(--amber-dim); }
+  .note-area::placeholder { color: var(--text-muted); }
+  .note-meta { display: flex; justify-content: space-between; margin-top: 6px; }
+  .char-count { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); }
+  .note-tip { font-size: 11px; color: var(--text-muted); font-style: italic; }
+
+  /* ── LOADING ── */
+  .loading-bar {
+    height: 2px; background: var(--border); border-radius: 2px;
+    margin: 16px 0; overflow: hidden;
+  }
+  .loading-bar-inner {
+    height: 100%; background: linear-gradient(90deg, transparent, var(--amber), transparent);
+    animation: shimmer 1.2s infinite;
+    width: 40%;
+  }
+  @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(350%); } }
+  .loading-text { text-align: center; font-size: 12px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+
+  /* ── ERROR ── */
+  .error-box { background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.25); border-radius: 8px; padding: 12px; color: #fca5a5; font-size: 13px; margin-top: 12px; }
+
+  /* ── CARDS ── */
+  .cards-header { display: flex; justify-content: space-between; align-items: center; margin: 24px 0 14px; }
+  .cards-header h2 { font-family: 'DM Serif Display', serif; font-size: 18px; }
+  .cards-header p  { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); margin-bottom: 16px;
+    animation: fadeUp .3s ease both;
+  }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .card-head {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 14px 16px 12px; border-bottom: 1px solid var(--border);
+  }
+  .card-num {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    color: var(--amber); background: rgba(245,158,11,.1);
+    padding: 2px 7px; border-radius: 4px; margin-right: 8px; flex-shrink: 0;
+  }
+  .card-ten { font-family: 'DM Serif Display', serif; font-size: 16px; color: var(--text); flex: 1; }
+  .card-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+  .card-body { padding: 14px 16px; }
+
+  /* cau_cot_loi block */
+  .cau-block {
+    background: rgba(245,158,11,.07); border: 1px solid rgba(245,158,11,.2);
+    border-radius: 8px; padding: 12px 14px; margin-bottom: 12px;
+    position: relative;
+  }
+  .cau-block::before {
+    content: '"';
+    position: absolute; top: -8px; left: 10px;
+    font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--amber-dim);
+    line-height: 1;
+  }
+  .field-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--amber-dim); margin-bottom: 5px; }
+  .cau-text { font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.5; }
+
+  /* noi_dung block */
+  .noidung-block {
+    background: var(--bg-panel); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px 14px;
+  }
+  .noidung-text {
+    font-size: 13.5px; color: #ccc; line-height: 1.8;
+    white-space: pre-wrap; word-break: break-word;
+  }
+  .noidung-fade { max-height: 120px; overflow: hidden; position: relative; }
+  .noidung-fade::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 40px;
+    background: linear-gradient(transparent, var(--bg-panel));
+  }
+  .show-more-btn {
+    background: none; border: none; cursor: pointer;
+    font-size: 11px; color: var(--text-muted); margin-top: 6px;
+    font-family: 'JetBrains Mono', monospace; letter-spacing: 0.5px;
+    padding: 4px 0;
+  }
+  .show-more-btn:hover { color: var(--amber); }
+
+  /* Tags */
+  .card-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+  .tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border);
+    background: var(--bg-panel);
+  }
+  .tag-nguon { color: #93c5fd; border-color: #1e3a5f; background: rgba(59,130,246,.08); }
+  .tag-chude { color: #a3e635; border-color: #2a3a1e; background: rgba(132,204,22,.08); }
+  .tag-copy  { cursor: pointer; color: var(--text-muted); }
+  .tag-copy:hover { color: var(--amber); border-color: var(--amber-dim); }
+
+  /* ── EDIT MODE ── */
+  .edit-field { margin-bottom: 12px; }
+  .edit-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+  .edit-input, .edit-textarea, .edit-select {
+    width: 100%; background: var(--bg-panel); border: 1px solid var(--border);
+    color: var(--text); border-radius: 6px; padding: 9px 12px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    outline: none; transition: border-color .2s;
+  }
+  .edit-input:focus, .edit-textarea:focus, .edit-select:focus { border-color: var(--amber-dim); }
+  .edit-textarea { resize: vertical; line-height: 1.7; min-height: 140px; }
+  .edit-select option { background: var(--bg-panel); }
+
+  /* ── COPY PANEL ── */
+  .copy-panel {
+    background: rgba(34,197,94,.05); border: 1px solid #1a3a1a;
+    border-radius: var(--radius); padding: 14px 16px; margin-top: 8px;
+  }
+  .copy-guide { font-size: 12px; color: #4ade80; margin-bottom: 10px; line-height: 1.6; }
+  .copy-guide strong { color: var(--green); }
+  .copy-guide code { font-family: 'JetBrains Mono', monospace; font-size: 10px; background: rgba(34,197,94,.1); padding: 1px 5px; border-radius: 3px; }
+
+  /* ── BOTTOM DIVIDER ── */
+  .section-div { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+
+  /* ── SUCCESS FLASH ── */
+  .copied-flash { animation: flashGreen .5s ease; }
+  @keyframes flashGreen { 0% { background: rgba(34,197,94,.15); } 100% { background: var(--bg-card); } }
+
+  /* ── FOOTER ── */
+  .footer { text-align: center; margin-top: 40px; }
+  .footer p { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 0.5px; line-height: 1.8; }
+  .footer em { color: var(--amber-dim); font-style: normal; }
+
+  /* ── SCROLL ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* Mobile */
+  @media (max-width: 480px) {
+    .header { flex-direction: column; gap: 8px; align-items: flex-start; }
+    .card-ten { font-size: 14px; }
+    .seg { font-size: 11px; padding: 5px 10px; }
+  }
+</style>
 </head>
-<body class="bg-gray-50">
-<div id="root"></div>
+<body>
+<div id="app"></div>
 
-<script type="text/babel">
-const { useState } = React;
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  SYSTEM PROMPT — Bài Viết Nguyên Tử v5
+//  Schema v3: ten_the + cau_cot_loi + noi_dung
+//  Brand: Lê Hữu Tuyến · Copywriting & Direct Response
+// ═══════════════════════════════════════════════════════════════
+const SYSTEM_PROMPT = `Bạn là trợ lý format Bài Viết Nguyên Tử cho Lê Hữu Tuyến — Copywriter & Direct Response Marketer, 10+ năm kinh nghiệm.
 
-const SYSTEM_PROMPT = `Bạn là trợ lý format Bài Viết Nguyên Tử cho Xưởng Tâm Lý Học. Mỗi output là Atomic Content (định nghĩa: mẩu nội dung nhỏ nhất, độc lập, chỉ giải quyết DUY NHẤT một ý tưởng).
+=== VAI TRÒ ===
+Tuyến ghi chú thô từ trải nghiệm thực tế, quan sát, đọc sách. Bạn KHÔNG sáng tác — chỉ làm sạch, cấu trúc hóa, làm sắc nét những gì Tuyến đã sống và đã nghĩ. Kho tri thức phải mang dấu vân tay thực tế của Tuyến.
 
-=== ĐỊNH NGHĨA ATOMIC CONTENT ===
-Atomic Content là mẩu nội dung nhỏ nhất, độc lập, chỉ giải quyết DUY NHẤT một ý tưởng (single idea).
-Đặc điểm cốt lõi:
-• Tính đơn nhất: Một vấn đề, một giải pháp hoặc một thông điệp.
-• Tính linh hoạt: Có thể đứng một mình (post ngắn, thẻ tri thức) hoặc lắp ghép thành kịch bản video/script dài hơn.
-• Tối ưu chuyển đổi: Giúp người xem hấp thụ giá trị nhanh trong 15-60 giây.
-Nếu input chứa 2+ ý rõ ràng khác nhau → PHẢI tách thành nhiều thẻ riêng biệt, mỗi thẻ = 1 ý duy nhất. Luôn ưu tiên tách tối đa nếu ghi chú có:  
-• Nhiều khoảnh khắc / ví dụ khác nhau  
-• So sánh hai cách làm (Mỹ vs Nhật, cũ vs mới)  
-• Kết luận + lý do riêng biệt  
-Mỗi thẻ phải độc lập hoàn toàn, không lặp ý.
+=== QUY TẮC TÁCH THẺ ===
+Atomic Content = mẩu nội dung nhỏ nhất, chỉ giải quyết DUY NHẤT 1 ý tưởng.
+- 1 ghi chú, 1 ý → trả về 1 thẻ
+- 1 ghi chú, nhiều ý RÕ RÀNG KHÁC NHAU → tách thành nhiều thẻ, mỗi thẻ = 1 ý độc lập
+- Tối đa 3 thẻ mỗi lần
+- Nếu ghi chú quá lộn xộn (>3 ý) → CHỌN 3 ý rõ nhất, bỏ phần còn lại
+- Mỗi thẻ phải độc lập hoàn toàn — đọc thẻ này không cần biết thẻ kia
 
-=== VAI TRÒ CỦA BẠN ===
-Tuyến ghi chú thô từ trải nghiệm thực tế, quan sát, đọc sách. Bạn KHÔNG sáng tác — bạn làm sạch, cấu trúc hóa, và làm sắc nét những gì Tuyến đã sống và đã nghĩ. Kho tri thức này phải mang dấu vân tay thực tế của Tuyến, không phải nội dung AI tự nghĩ ra.
+Tách khi ghi chú có:
+• Nhiều khoảnh khắc / ví dụ khác nhau
+• So sánh 2 cách làm / 2 góc nhìn đối lập
+• Kết luận + lý do có thể tách thành 2 góc nhìn riêng
 
-=== 8 FIELDS BẮT BUỘC (không thêm, không bớt) ===
+=== 3 FIELDS BẮT BUỘC ===
 
-1. ten_y_tuong
-Tên ngắn 3-7 từ, đặt như tên một "vũ khí" — người đọc tên là biết dùng để làm gì.
-Dùng dấu gạch ngang nếu cần: "Neo Giá – Số Đầu Tiên", "Bán xe – Phụ kiện sau"
+1. ten_the
+3–7 từ. Đặt như tên một "vũ khí" — đọc tên là biết dùng để làm gì. Dùng "–" nếu cần: "Neo Giá – Số Đầu Tiên", "Câu Hỏi Sau Chốt Đơn"
+KHÔNG đặt tên mơ hồ như "Kỹ Thuật Hay" hay "Insight Thú Vị".
 
 2. cau_cot_loi
 Đúng 1 câu, tối đa 20 từ.
-Tiêu chí: nếu cắt hết 7 trường còn lại, chỉ còn câu này — người đọc vẫn hiểu thẻ đang nói về điều gì và tại sao quan trọng.
+Tiêu chí vàng: nếu cắt hết mọi thứ, chỉ còn câu này — người đọc vẫn hiểu ý và tại sao quan trọng.
+Câu này phải đứng được một mình như quote trên mạng xã hội.
 
-3. giai_thich
-2-4 câu. Không công thức mở đầu cố định — mỗi thẻ tự tìm cách vào bài phù hợp nhất.
-Tiêu chí: đọc xong người ta thấy "ừ đúng rồi" (cảm xúc nhận ra) — không phải "ừ tôi hiểu rồi" (nhận thức thông tin).
-Không dùng ngôn ngữ học thuật, không trích dẫn nghiên cứu.
+3. noi_dung
+Bài viết nguyên tử đầy đủ. Cấu trúc Đề–Thực–Luận–Kết — NHƯNG đây là LOGIC TƯ DUY, không phải form cứng:
+  ĐỀ: Câu mở không sáo rỗng. Phải khiến người đọc muốn đọc tiếp — quan sát kỳ lạ, nghịch lý, hoặc tình huống người đọc đã từng sống qua.
+  THỰC: Mô tả vấn đề cụ thể. Ví dụ PHẢI cụ thể đến mức đặt tên người/địa điểm được. Không phải "một khách hàng" — phải là "chị Hoa bán mỹ phẩm ở Vũng Tàu". Nếu ghi chú có bối cảnh thực tế → giữ nguyên, làm sắc nét hơn. KHÔNG tự bịa bối cảnh.
+  LUẬN: 2–3 điểm. Mỗi điểm: luận điểm → lý do → dẫn chứng cụ thể. Không dump lý thuyết dày đặc.
+  KẾT: 1–2 câu. Câu kết phải đứng được một mình.
 
-4. vi_do_vn
-QUAN TRỌNG: Đọc kỹ ghi chú — bối cảnh thực tế đã có sẵn trong đó (quán phở, showroom xe, chợ, cuộc gặp khách hàng...). Lấy chính bối cảnh đó, làm cụ thể và sắc nét hơn.
-KHÔNG tự bịa bối cảnh mới nếu ghi chú đã có.
-Nếu ghi chú hoàn toàn không có bối cảnh thực tế → điền "CẦN BỔ SUNG: ghi chú thiếu bối cảnh thực tế" thay vì bịa.
-Bối cảnh phải là thứ người Việt 30-45 tuổi làm kinh doanh gặp trong tuần.
+Độ dài: 200–500 từ. Câu ngắn. Đoạn ngắn (2–4 câu/đoạn). Không bullet point trong noi_dung.
+Giọng: direct, thực chiến, không hoa mỹ — như Tuyến đang kể chuyện cho người bạn làm kinh doanh nghe.
+TUYỆT ĐỐI KHÔNG: câu mở "Hôm nay tôi muốn chia sẻ", không "Theo nghiên cứu", không ngôn ngữ học thuật.
 
-5. dieu_bat_ngo
-Điều mà nếu Tuyến kể ở bàn nhậu với bạn làm kinh doanh, người nghe sẽ đặt ly xuống.
-Không phải thông tin bổ sung — phải là điều đảo lộn cách nghĩ quen thuộc.
+=== KIỂM TRA TRƯỚC KHI OUTPUT ===
+□ Mỗi thẻ chỉ có đúng 1 ý tưởng trung tâm?
+□ cau_cot_loi đứng được một mình như quote?
+□ Ví dụ trong noi_dung có tên người/địa điểm cụ thể?
+□ Giọng văn có phải của Tuyến không (direct, không hoa mỹ)?
+□ Câu mở của noi_dung có phải đọc xong muốn đọc tiếp không?
 
-6. dung_duoc_ngay
-Hành động cụ thể, làm được ngay hôm nay, không cần chuẩn bị.
-Không bắt đầu bằng "Hãy..." hoặc "Bạn nên..."
+=== FORMAT OUTPUT ===
+Chỉ trả về JSON array thuần. Không markdown, không giải thích.
+Bắt đầu bằng [ và kết thúc bằng ].
+Ví dụ cấu trúc:
+[
+  {
+    "ten_the": "...",
+    "cau_cot_loi": "...",
+    "noi_dung": "..."
+  }
+]`;
 
-7. nguon — CHÍNH XÁC 1 trong 3 giá trị:
-"Tâm Lý Mua & Bán"  → từ sách, nghiên cứu, lý thuyết
-"Quan sát thực tế"   → từ quan sát cá nhân, trải nghiệm, chứng kiến thực tế
-"Hook viral"         → từ phân tích video viral, hook hay của đối thủ TikTok/Facebook
-Nếu không rõ → "Tâm Lý Mua & Bán"
+// ═══════════════════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════════════════
+const NGUON_OPTIONS = [
+  { value: 'Chuyên Môn', label: 'Chuyên Môn', collection: 'kien-thuc-chuyen-mon' },
+  { value: 'Sách',       label: 'Sách',        collection: 'sach-hoc-tap' },
+  { value: 'Quan Sát',  label: 'Quan Sát',    collection: 'quan-sat-thuc-te' },
+];
+const CHUDE_OPTIONS = [
+  { value: 'C1-Copywriting & Direct Response', label: 'C1 · Copywriting' },
+  { value: 'C2-Tâm Lý Thuyết Phục',           label: 'C2 · Tâm Lý' },
+  { value: 'C3-Hệ Thống Kinh Doanh Solo',      label: 'C3 · Hệ Thống' },
+];
 
-8. ngay_tao — format DD/MM/YYYY, lấy từ ngày được cung cấp trong prompt
+// ═══════════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════════
+let state = {
+  apiKey:     localStorage.getItem('ant_key') || '',
+  keySaved:   !!localStorage.getItem('ant_key'),
+  nguon:      localStorage.getItem('sel_nguon') || 'Chuyên Môn',
+  chuDe:      localStorage.getItem('sel_chude') || 'C1-Copywriting & Direct Response',
+  input:      '',
+  cards:      [],
+  loading:    false,
+  error:      '',
+  copied:     null,       // card index or 'all'
+  expanded:   {},         // { idx: bool }
+  editing:    null,       // card index
+  editData:   {},
+};
 
-=== VÍ DỤ CHUẨN ===
-Input: "Hôm nay thấy quán phở để tô đặc biệt 150k đầu menu, rồi mới đến tô thường 60k. Khách cứ gọi tô thường mà không thấy đắt. Nhớ đến Cialdini viết về contrast principle."
-Output:
-[{
-  "ten_y_tuong": "Menu – Neo Giá Đầu Trang",
-  "cau_cot_loi": "Giá đầu tiên khách thấy sẽ làm mọi mức giá sau đó tự động trông rẻ hơn.",
-  "giai_thich": "Chúng ta không định giá thứ gì theo kiểu tuyệt đối — luôn là so sánh với thứ vừa thấy trước đó. Quán phở không cần bán tô 150k, họ chỉ cần khách nhìn thấy nó trước. Phần còn lại não tự xử.",
-  "vi_du_vn": "Quán phở trên đường Tuyến quan sát: tô đặc biệt 150k đứng đầu menu dù ít người gọi — tô thường 60k phía dưới luôn được chọn mà không bị chê đắt.",
-  "dieu_bat_ngo": "Chiêu này không cần khách bị lừa — ngay cả khi khách biết đó là neo giá, não vẫn bị ảnh hưởng. Biết bẫy mà vẫn dính là đặc tính của hệ thống 1.",
-  "dung_duoc_ngay": "Mở lại bảng giá hoặc menu — đặt gói/sản phẩm đắt nhất lên đầu tiên, dù nó ít bán. Không cần đổi giá, chỉ đổi thứ tự.",
-  "nguon": "Quan sát thực tế",
-  "ngay_tao": "03/03/2026"
-}]
-
-Luôn tuân thủ:
-- Tách input thành nhiều thẻ nếu có nhiều ý rõ ràng khác nhau.
-- Nếu thiếu bối cảnh VN → trả về "CẦN BỔ SUNG: ghi chú thiếu bối cảnh thực tế" trong field vi_du_vn.
-- Ngôn ngữ gần gũi, sắc bén, không sáo rỗng.
-
-Luôn ưu tiên tách tối đa nếu ghi chú có:
-- Nhiều khoảnh khắc / ví dụ khác nhau (ví dụ: khoảnh khắc 1 vs khoảnh khắc 2)
-- So sánh hai cách làm (cũ vs mới, Mỹ vs Nhật, làm nhiều vs mài dao)
-- Kết luận + lý do riêng biệt
-Mỗi thẻ PHẢI độc lập hoàn toàn, không lặp ý, không kể chuyện nối tiếp.
-
-dieu_bat_ngo PHẢI là điều khiến người nghe bàn nhậu đặt ly xuống: dùng góc dark psychology (hệ thống 1 bị lừa dù biết), contrast cực đoan, hoặc nghịch lý thực tế (biết mà vẫn dính, làm nhiều lại thua làm ít).
-
-giai_thich phải tạo cảm giác "trời ơi đúng là mình" – dùng ngôn ngữ đời thường, chạm nỗi đau kinh doanh solo (vất vả, mất thời gian, khách không chốt dù quảng cáo ngon).
-
-Nếu input có yếu tố "mài dao 80/20" hoặc "tĩnh chế động" → ưu tiên framework REFRAME hoặc STORY_LENS.
-
-dieu_bat_ngo phải có yếu tố "biết mà vẫn dính" hoặc "làm nhiều lại thua làm ít" – tạo shock bàn nhậu kiểu "trời ơi sao mình ngu vậy".
-
-Chỉ trả về JSON array thuần. Không markdown, không giải thích, không text nào ngoài JSON. Bắt đầu bằng [ và kết thúc bằng ].`;
-
-const SUGGEST_PROMPT = `Bạn là chuyên gia đánh giá Atomic Content cho Xưởng Tâm Lý Học.
-
-Atomic Content = mẩu nội dung nhỏ nhất, chỉ giải quyết DUY NHẤT một ý tưởng, đủ để sản xuất video 15-60 giây.
-
-Đọc ghi chú thô dưới đây và phân tích XEM CÒN THIẾU GÌ để có thể format thành Atomic Content chuẩn.
-
-Kiểm tra 5 điểm:
-1. Có nhiều hơn 1 ý không? → cần tách thành mấy thẻ?
-2. Bối cảnh thực tế VN có cụ thể không? (quán nào, ai, tình huống nào cụ thể)
-3. Câu cốt lõi có thể viết được 1 câu ≤20 từ không, hay ý quá mơ hồ?
-4. Có "điều bất ngờ" đảo lộn nhận thức không, hay chỉ là thông tin bình thường?
-5. Nguồn thuộc loại nào: "Tâm Lý Mua & Bán" / "Quan sát thực tế" / "Hook viral"?
-6. Có tiềm năng "điều bất ngờ" mạnh không? (điểm từ 1-10, nếu <6 thì cảnh báo)
-7. Có thể map vào framework nào? (REFRAME / STORY_LENS / SPEAR / MYTH_BREAK / TRANSFORM)
-
-Trả về JSON object với cấu trúc:
-{
-  "so_the_du_kien": <số nguyên>,
-  "chat_luong_tong_the": "TỐT | KHÁ | CẦN BỔ SUNG",
-  "goi_y": ["gợi ý 1 cụ thể", "gợi ý 2 cụ thể", ...],
-  "diem_manh": "1-2 câu nêu điểm mạnh của ghi chú",
-  "canh_bao": "cảnh báo nếu ghi chú quá mơ hồ, hoặc '' nếu ổn",
-  "diem_bat_ngo": <số từ 1-10>,
-    "framework_goi_y": "REFRAME" hoặc "STORY_LENS" hoặc "...",
+function setState(patch) {
+  Object.assign(state, patch);
+  render();
 }
 
-Chỉ trả về JSON object thuần. Bắt đầu bằng { và kết thúc bằng }.`;
+// ═══════════════════════════════════════════════════════════════
+//  API CALL
+// ═══════════════════════════════════════════════════════════════
+async function generate() {
+  if (!state.input.trim()) return;
+  if (!state.apiKey) { setState({ error: 'Nhập Anthropic API Key trước.' }); return; }
 
-function App() {
-  const [apiKey, setApiKey]           = useState(localStorage.getItem("oai_key") || "");
-  const [apiKeySaved, setApiKeySaved] = useState(!!localStorage.getItem("oai_key"));
-  const [input, setInput]             = useState("");
-  const [charCount, setCharCount] = useState(0);
-  const [cards, setCards]             = useState([]);
-  const [loading, setLoading]         = useState(false);
-  const [analyzing, setAnalyzing]     = useState(false);
-  const [error, setError]             = useState("");
-  const [copied, setCopied]           = useState(false);
-  const [editingCard, setEditingCard] = useState(null);
-  const [suggestion, setSuggestion]   = useState(null);
-  const [analysisResult, setAnalysisResult] = useState(null);
+  setState({ loading: true, error: '', cards: [], copied: null });
 
-  const today = new Date().toLocaleDateString("vi-VN", {
-    day: "2-digit", month: "2-digit", year: "numeric"
-  });
+  const today = new Date().toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const userMsg = `Nguồn: ${state.nguon}\nChủ đề: ${state.chuDe}\nNgày: ${today}\n\nGhi chú của tôi:\n${state.input.trim()}`;
 
-  const saveKey = () => {
-    localStorage.setItem("oai_key", apiKey);
-    setApiKeySaved(true);
-  };
-
-  const callOpenAI = async (systemPrompt, userContent, maxTokens = 2000) => {
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`
+        'Content-Type': 'application/json',
+        'x-api-key': state.apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",  // thay vì gpt-4o,
-        temperature: 0.4,
-        max_tokens: maxTokens,
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user",   content: userContent }
-        ]
-      })
+        model: 'claude-haiku-4-5',
+        max_tokens: 4000,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: userMsg }],
+      }),
     });
+
     const data = await res.json();
     if (data.error) throw new Error(data.error.message);
-    return data.choices?.[0]?.message?.content || "";
-  };
 
-  const processInput = async () => {
-    if (!input.trim()) return;
-    if (!apiKey) { setError("Vui lòng nhập OpenAI API Key trước."); return; }
-    setLoading(true);
-    setError("");
-    setCards([]);
-    setSuggestion(null);
+    const raw = data.content?.[0]?.text || '[]';
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const cards = JSON.parse(clean);
 
-    try {
-      let userPrompt = `Ghi chú của tôi (ngày hôm nay: ${today}):\n\n${input}`;
-      
-      // ← PHẦN KẾT NỐI 2 NÚT
-      if (analysisResult && analysisResult.so_the_du_kien) {
-        userPrompt = `Theo phân tích trước đây, nên tách thành ${analysisResult.so_the_du_kien} thẻ Atomic Content. Hãy thực hiện đúng như vậy.\n\n` + userPrompt;
-      }
+    if (!Array.isArray(cards) || cards.length === 0) throw new Error('Không parse được kết quả. Thử lại.');
 
-      const text = await callOpenAI(
-        SYSTEM_PROMPT,
-        userPrompt
-      );
-      const clean = text.replace(/```json|```/g, "").trim();
-      setCards(JSON.parse(clean));
-      } catch (e) {
-      setError(`Lỗi: ${e.message || "Thử lại hoặc kiểm tra API key."}`);
-      }
-    setLoading(false);
-  };
+    setState({
+      loading: false,
+      cards: cards.map(c => ({ ...c, nguon: state.nguon, chu_de: state.chuDe })),
+      expanded: {},
+      editing: null,
+    });
+    // scroll to results
+    setTimeout(() => document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' }), 100);
 
-    const analyzeInput = async () => {
-    if (!input.trim()) return;
-    if (!apiKey) { setError("Vui lòng nhập OpenAI API Key trước."); return; }
-    setAnalyzing(true);
-    setError("");
-    setSuggestion(null);
-
-    try {
-      const text = await callOpenAI(
-        SUGGEST_PROMPT,
-        `Ghi chú cần phân tích (ngày: ${today}):\n\n${input}`,
-        600
-      );
-      const clean = text.replace(/```json|```/g, "").trim();
-      const parsed = JSON.parse(clean);
-      setSuggestion(parsed);
-      setAnalysisResult(parsed);   // ← DÒNG QUAN TRỌNG: lưu để Format dùng
-    } catch (e) {
-      setError(`Lỗi phân tích: ${e.message || "Thử lại."}`);
-    }
-    setAnalyzing(false);
-  };
-
-  const copyForSheet = () => {
-    const rows = cards.map(c =>
-      [c.ten_y_tuong, c.cau_cot_loi, c.giai_thich, c.vi_du_vn,
-       c.dieu_bat_ngo, c.dung_duoc_ngay, c.nguon, c.ngay_tao].join("\t")
-    ).join("\n");
-    navigator.clipboard.writeText(rows);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
-  };
-
-  const updateCard  = (idx, field, val) =>
-    setCards(prev => prev.map((c, i) => i === idx ? { ...c, [field]: val } : c));
-  const deleteCard  = (idx) =>
-    setCards(prev => prev.filter((_, i) => i !== idx));
-
-  const nguonColor = (n) => {
-    if (n?.includes("Quan sát")) return "bg-green-100 text-green-700 border-green-200";
-    if (n?.includes("Hook"))     return "bg-purple-100 text-purple-700 border-purple-200";
-    return "bg-blue-100 text-blue-700 border-blue-200";
-  };
-  const nguonCollection = (n) => {
-    if (n?.includes("Quan sát")) return "quan-sat-doi-thuc";
-    if (n?.includes("Hook"))     return "mau-hook-viral";
-    return "the-ghi-chu-xtlh";
-  };
-
-  const needsContext = (card) => card.vi_du_vn?.startsWith("CẦN BỔ SUNG");
-
-  const qualityColor = (q) => {
-    if (q === "TỐT")          return "bg-green-50 border-green-200 text-green-800";
-    if (q === "KHÁ")          return "bg-blue-50 border-blue-200 text-blue-800";
-    return "bg-orange-50 border-orange-200 text-orange-800";
-  };
-  const qualityIcon = (q) => {
-    if (q === "TỐT") return "✅";
-    if (q === "KHÁ") return "👍";
-    return "⚠️";
-  };
-
-  const fields = [
-    { key: "ten_y_tuong",   label: "Tên ý tưởng",     hint: "3-7 từ, tên vũ khí",              rows: 1 },
-    { key: "cau_cot_loi",   label: "Câu cốt lõi",      hint: "1 câu ≤20 từ",                    rows: 2 },
-    { key: "giai_thich",    label: "Giải thích",        hint: "ừ đúng rồi — không phải ừ hiểu",  rows: 3 },
-    { key: "vi_du_vn",      label: "Ví dụ từ ghi chú", hint: "Bối cảnh Tuyến đã gặp",           rows: 3 },
-    { key: "dieu_bat_ngo",  label: "Điều bất ngờ",     hint: "Đặt ly xuống mà nghe",            rows: 2 },
-    { key: "dung_duoc_ngay",label: "Dùng được ngay",   hint: "Không Hãy.../Bạn nên...",         rows: 2 },
-  ];
-
-  return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-2xl mx-auto">
-
-        {/* Header */}
-        <div className="mb-5">
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold text-gray-800">⚛️ Trợ Lý Bài Viết Nguyên Tử</h1>
-            <span className="text-xs bg-indigo-100 text-indigo-600 font-semibold px-2 py-0.5 rounded-full">v3.0</span>
-          </div>
-          <p className="text-gray-400 text-xs mt-1">Xưởng Tâm Lý Học · Paste ghi chú thô → nhận Atomic Content chuẩn → dán vào Sheet</p>
-        </div>
-
-        {/* API Key */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4">
-          <label className="block text-xs font-medium text-gray-600 mb-1.5">
-            OpenAI API Key {apiKeySaved && <span className="text-green-500 ml-1">✓ Đã lưu</span>}
-          </label>
-          <div className="flex gap-2">
-            <input
-              type="password"
-              className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
-              placeholder="sk-proj-..."
-              value={apiKey}
-              onChange={e => { setApiKey(e.target.value); setApiKeySaved(false); }}
-            />
-            <button onClick={saveKey}
-              className="bg-indigo-100 hover:bg-indigo-200 text-indigo-700 text-sm font-medium px-4 py-2 rounded-lg transition whitespace-nowrap">
-              Lưu
-            </button>
-          </div>
-          <p className="text-xs text-gray-400 mt-1.5">Key lưu trên trình duyệt, chỉ gửi đến OpenAI</p>
-        </div>
-
-        {/* Input */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Ghi chú thô của bạn
-          </label>
-          <p className="text-xs text-gray-400 mb-2">
-            Càng nhiều bối cảnh thực tế → thẻ càng sắc nét. Ghi nhiều ý một lần — AI tự tách thành nhiều thẻ Atomic Content riêng biệt.
-          </p>
-          <div className="relative">
-          <textarea
-            className="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-300 resize-y min-h-[120px]"
-            rows={6}
-            value={input}
-            onChange={e => { 
-              const value = e.target.value;
-              setInput(value); 
-              setSuggestion(null); 
-              setAnalysisResult(null); 
-              setCharCount(value.length);
-            }}
-            placeholder="Dump ghi chú thô, quan sát, khoảnh khắc thực tế... (tốt nhất 400-800 ký tự)"
-          />
-
-          {/* Đếm ngược ký tự - góc dưới phải textarea */}
-          <div className={`absolute bottom-2 right-3 text-xs font-medium ${
-            charCount > 900 ? 'text-red-600' : 
-            charCount > 700 ? 'text-yellow-600' : 
-            'text-gray-500'
-          }`}>
-            {charCount} / 900
-            {charCount > 900 && <span className="ml-1 font-bold">– Rút gọn!</span>}
-          </div>
-        </div>
-
-        {/* Cảnh báo đỏ khi vượt 900 */}
-        {charCount > 900 && (
-          <p className="mt-1 text-xs text-red-600 font-medium bg-red-50 p-1.5 rounded border border-red-200">
-            Ghi chú quá dài → model dễ tách sai. Hãy chắt lọc thành 1-2 ý chính. Rác vào → rác ra.
-          </p>
-        )}
-
-          {/* Two action buttons */}
-          <div className="mt-3 flex gap-2">
-            <button
-              onClick={analyzeInput}
-              disabled={analyzing || loading || !input.trim() || !apiKey}
-              className="flex-1 bg-amber-50 hover:bg-amber-100 disabled:bg-gray-100 border border-amber-200 disabled:border-gray-200 text-amber-700 disabled:text-gray-400 font-medium py-2.5 rounded-lg transition text-sm"
-            >
-              {analyzing ? "⏳ Đang phân tích..." : "🔍 Phân tích & Gợi ý thiếu"}
-            </button>
-            <button 
-              onClick={processInput}
-              disabled={loading || charCount > 1000 || !input.trim() || !apiKey}
-              className={`flex-1 py-2.5 rounded-lg text-white font-medium transition text-sm ${
-                loading || charCount > 1000 || !input.trim() || !apiKey
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-indigo-600 hover:bg-indigo-700'
-              }`}
-            >
-              {loading ? "⏳ Đang xử lý..." : "✨ Format → Atomic Content"}
-            </button>
-          </div>
-
-          {error && (
-            <div className="text-red-600 text-xs mt-2 bg-red-50 border border-red-200 p-2.5 rounded-lg">{error}</div>
-          )}
-        </div>
-
-        {/* Suggestion Panel */}
-        {suggestion && (
-          <div className={`rounded-xl border p-4 mb-4 ${qualityColor(suggestion.chat_luong_tong_the)}`}>
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-semibold">
-                {qualityIcon(suggestion.chat_luong_tong_the)} Phân tích ghi chú — {suggestion.chat_luong_tong_the}
-              </p>
-              <span className="text-xs font-medium opacity-70">
-                Dự kiến {suggestion.so_the_du_kien} thẻ Atomic Content
-              </span>
-            </div>
-
-            {suggestion.diem_manh && (
-              <p className="text-xs mb-2 opacity-80">
-                <strong>Điểm mạnh:</strong> {suggestion.diem_manh}
-              </p>
-            )}
-
-            {suggestion.goi_y?.length > 0 && (
-              <div className="mb-2">
-                <p className="text-xs font-semibold mb-1.5">Gợi ý bổ sung:</p>
-                <ul className="space-y-1">
-                  {suggestion.goi_y.map((g, i) => (
-                    <li key={i} className="text-xs flex gap-1.5">
-                      <span className="opacity-50 flex-shrink-0">→</span>
-                      <span>{g}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {suggestion.canh_bao && (
-              <div className="mt-2 bg-white bg-opacity-60 rounded-lg p-2 text-xs">
-                <strong>⚠️ Cảnh báo:</strong> {suggestion.canh_bao}
-              </div>
-            )}
-
-            <button
-              onClick={processInput}
-              disabled={loading || !input.trim() || !apiKey}
-              className="mt-3 w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 text-white font-medium py-2 rounded-lg transition text-sm"
-            >
-              {loading ? "⏳ Đang xử lý..." : "✨ Vẫn format ngay →"}
-            </button>
-          </div>
-        )}
-
-        {/* Cards */}
-        {cards.length > 0 && (
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <p className="text-sm font-semibold text-gray-700">{cards.length} Atomic Content — kiểm tra trước khi copy</p>
-                <p className="text-xs text-gray-400 mt-0.5">Mỗi thẻ = 1 ý duy nhất độc lập</p>
-              </div>
-              <button onClick={copyForSheet}
-                className="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
-                {copied ? "✅ Đã copy!" : "📋 Copy tất cả"}
-              </button>
-            </div>
-
-            {cards.map((card, idx) => (
-              <div key={idx} className={`bg-white rounded-xl border p-4 mb-4 ${needsContext(card) ? "border-orange-300" : "border-gray-200"}`}>
-
-                {/* Cảnh báo thiếu bối cảnh */}
-                {needsContext(card) && (
-                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-2.5 mb-3 text-xs text-orange-700">
-                    ⚠️ <strong>Thiếu bối cảnh thực tế</strong> — ghi chú không có tình huống cụ thể. Hãy bổ sung vào ô "Ví dụ từ ghi chú" bên dưới.
-                  </div>
-                )}
-
-                {/* Card header */}
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex-1 min-w-0 mr-3">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-gray-400 font-medium">#{idx + 1}</span>
-                      <p className="font-semibold text-gray-800 text-sm">{card.ten_y_tuong}</p>
-                    </div>
-                    <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium border ${nguonColor(card.nguon)}`}>
-                        {card.nguon}
-                      </span>
-                      <span className="text-xs text-gray-400">→ {nguonCollection(card.nguon)}</span>
-                    </div>
-                  </div>
-                  <div className="flex gap-1.5 flex-shrink-0">
-                    <button onClick={() => setEditingCard(editingCard === idx ? null : idx)}
-                      className="text-xs text-indigo-500 px-2.5 py-1 rounded-lg border border-indigo-200 hover:bg-indigo-50">
-                      {editingCard === idx ? "Xong" : "Sửa"}
-                    </button>
-                    <button onClick={() => deleteCard(idx)}
-                      className="text-xs text-red-400 px-2.5 py-1 rounded-lg border border-red-200 hover:bg-red-50">
-                      Xóa
-                    </button>
-                  </div>
-                </div>
-
-                {/* View mode */}
-                {editingCard !== idx && (
-                  <div className="space-y-2">
-                    <div className="bg-indigo-50 rounded-lg p-2.5 border border-indigo-100">
-                      <p className="text-xs text-indigo-500 font-semibold mb-1">💡 Câu cốt lõi</p>
-                      <p className="text-sm text-gray-800 font-medium leading-snug">{card.cau_cot_loi}</p>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      {[
-                        ["📖 Giải thích",        card.giai_thich],
-                        ["🇻🇳 Ví dụ từ ghi chú", card.vi_du_vn],
-                        ["😮 Điều bất ngờ",       card.dieu_bat_ngo],
-                        ["⚡ Dùng ngay",           card.dung_duoc_ngay],
-                      ].map(([label, val]) => (
-                        <div key={label}
-                          className={`rounded-lg p-2.5 border ${label.includes("Ví dụ") && needsContext(card) ? "bg-orange-50 border-orange-200" : "bg-gray-50 border-gray-100"}`}>
-                          <p className="text-xs text-gray-400 font-medium mb-1">{label}</p>
-                          <p className="text-xs text-gray-700 leading-relaxed">{val}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Edit mode */}
-                {editingCard === idx && (
-                  <div className="space-y-3">
-                  {fields.map(({ key, label, hint, rows }) => (
-                  <div key={key}>
-                    <label className="text-xs font-medium text-gray-600 flex justify-between mb-1">
-                      <span>{label}</span>
-                      <span className="text-gray-400 font-normal italic">{hint}</span>
-                    </label>
-                    <textarea
-                      className="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-300 resize-none"
-                      rows={rows}
-                      value={card[key] || ""}
-                      onChange={e => updateCard(idx, key, e.target.value)}
-                    />
-                  </div>
-                ))}
-                    <div>
-                      <label className="text-xs font-medium text-gray-600 mb-1 block">
-                        Nguồn → quyết định collection Qdrant
-                      </label>
-                      <select
-                        className="w-full border border-gray-200 rounded-lg p-2.5 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-indigo-300"
-                        value={card.nguon || "Tâm Lý Mua & Bán"}
-                        onChange={e => updateCard(idx, "nguon", e.target.value)}>
-                        <option value="Tâm Lý Mua & Bán">Tâm Lý Mua & Bán → the-ghi-chu-xtlh</option>
-                        <option value="Quan sát thực tế">Quan sát thực tế → quan-sat-doi-thuc</option>
-                        <option value="Hook viral">Hook viral → mau-hook-viral</option>
-                      </select>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-
-            <button onClick={copyForSheet}
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-xl transition mb-4 text-sm">
-              {copied ? "✅ Đã copy! Vào Sheet paste vào ô A dòng trống." : "📋 Copy tất cả → Paste vào Google Sheet"}
-            </button>
-
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-6">
-              <p className="text-xs font-semibold text-amber-800 mb-1.5">Cách paste vào Google Sheet:</p>
-              <p className="text-xs text-amber-700 leading-relaxed">
-                1. Click ô <strong>A</strong> của dòng trống đầu tiên trong Sheet<br/>
-                2. Nhấn <strong>Cmd+V</strong> (Mac) hoặc Ctrl+V (Windows)<br/>
-                3. Dữ liệu tự điền vào đúng 8 cột A→H ✅<br/>
-                <span className="text-amber-500 mt-1 block">Cột I→P để trống — EC2 tự điền lúc 23:00</span>
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  } catch (e) {
+    setState({ loading: false, error: e.message || 'Lỗi không xác định. Kiểm tra API Key.' });
+  }
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+// ═══════════════════════════════════════════════════════════════
+//  COPY HELPERS
+// ═══════════════════════════════════════════════════════════════
+function buildSheetRow(card) {
+  // Columns: B=ten_the, C=cau_cot_loi, D=noi_dung, E=nguon, F=chu_de, G=status
+  return [card.ten_the, card.cau_cot_loi, card.noi_dung, card.nguon, card.chu_de, 'pending'].join('\t');
+}
+
+function copyCard(idx) {
+  const c = idx === 'all' ? state.cards : [state.cards[idx]];
+  const text = c.map(buildSheetRow).join('\n');
+  navigator.clipboard.writeText(text).then(() => {
+    setState({ copied: idx });
+    setTimeout(() => setState({ copied: null }), 2200);
+  });
+}
+
+function copyField(text, id) {
+  navigator.clipboard.writeText(text).then(() => {
+    const el = document.getElementById(id);
+    if (el) { el.classList.add('copied-flash'); setTimeout(() => el.classList.remove('copied-flash'), 500); }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  EDIT HELPERS
+// ═══════════════════════════════════════════════════════════════
+function startEdit(idx) {
+  setState({ editing: idx, editData: { ...state.cards[idx] } });
+}
+function cancelEdit() {
+  setState({ editing: null, editData: {} });
+}
+function saveEdit(idx) {
+  const newCards = [...state.cards];
+  newCards[idx] = { ...state.editData };
+  setState({ cards: newCards, editing: null, editData: {} });
+}
+function deleteCard(idx) {
+  const newCards = state.cards.filter((_, i) => i !== idx);
+  setState({ cards: newCards });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════════════════════
+function render() {
+  document.getElementById('app').innerHTML = template();
+  bindEvents();
+}
+
+function template() {
+  return `
+  <div>
+    ${renderHeader()}
+    ${renderKeyPanel()}
+    ${renderMetaPanel()}
+    ${renderInputPanel()}
+    ${state.loading ? renderLoading() : ''}
+    ${state.error   ? renderError()   : ''}
+    ${state.cards.length > 0 ? renderResults() : ''}
+    ${renderFooter()}
+  </div>`;
+}
+
+function renderHeader() {
+  return `<div class="header">
+    <div class="header-left">
+      <h1>Bài Viết <em>Nguyên Tử</em></h1>
+      <p>LÊ HỮU TUYẾN · COPYWRITING & DIRECT RESPONSE</p>
+    </div>
+    <span class="version-badge">v5.0</span>
+  </div>`;
+}
+
+function renderKeyPanel() {
+  const saved = state.keySaved;
+  return `<div class="panel">
+    <div class="panel-label">API Key${saved ? `<span class="saved-dot"></span>` : ''}</div>
+    <div class="key-row">
+      <input id="apiKeyInput" class="key-input" type="password"
+        placeholder="sk-ant-api03-..."
+        value="${escHtml(state.apiKey)}" />
+      <button class="btn btn-sm btn-save" onclick="saveKey()">Lưu</button>
+    </div>
+    <p class="key-hint">
+      Key lưu trên trình duyệt, chỉ gửi thẳng đến Anthropic.
+      <a href="https://console.anthropic.com/settings/keys" target="_blank">Lấy key →</a>
+    </p>
+  </div>`;
+}
+
+function renderMetaPanel() {
+  const nguonHTML = NGUON_OPTIONS.map(n =>
+    `<button class="seg ${state.nguon === n.value ? 'active' : ''}" onclick="setNguon('${n.value}')">${n.label}</button>`
+  ).join('');
+  const chuDeHTML = CHUDE_OPTIONS.map(c =>
+    `<button class="seg ${state.chuDe === c.value ? 'active' : ''}" onclick="setChuDe('${JSON.stringify(c.value).slice(1,-1)}')">${c.label}</button>`
+  ).join('');
+  return `<div class="panel">
+    <div class="panel-label">Phân loại thẻ</div>
+    <p class="seg-label">Nguồn</p>
+    <div class="seg-group" style="margin-bottom:14px">${nguonHTML}</div>
+    <p class="seg-label">Chủ đề</p>
+    <div class="seg-group">${chuDeHTML}</div>
+  </div>`;
+}
+
+function renderInputPanel() {
+  const len = state.input.length;
+  const disabled = !state.input.trim() || !state.apiKey || state.loading;
+  return `<div class="panel">
+    <div class="panel-label">Ghi chú thô</div>
+    <textarea id="noteInput" class="note-area"
+      placeholder="Ghi bất cứ thứ gì — gạch đầu dòng, đoạn lộn xộn, câu chưa xong... Nếu có nhiều ý thì cứ viết hết, AI tự tách thành từng thẻ riêng (tối đa 3 thẻ).&#10;&#10;Ví dụ: Hôm nay xem video quán phở để tô 150k đầu menu, 60k ở dưới. Khách cứ gọi 60k mà không thấy đắt..."
+      onInput="onInput(this)">${escHtml(state.input)}</textarea>
+    <div class="note-meta">
+      <span class="char-count">${len} ký tự</span>
+      <span class="note-tip">Nhiều bối cảnh thực tế → thẻ càng sắc nét</span>
+    </div>
+    <button class="btn btn-primary" style="margin-top:12px" ${disabled ? 'disabled' : ''} onclick="generate()">
+      ${state.loading ? '...' : '⚛ Tạo Thẻ Tri Thức'}
+    </button>
+  </div>`;
+}
+
+function renderLoading() {
+  return `<div style="padding:4px 0">
+    <div class="loading-bar"><div class="loading-bar-inner"></div></div>
+    <p class="loading-text">Claude đang format thẻ tri thức...</p>
+  </div>`;
+}
+
+function renderError() {
+  return `<div class="error-box">⚠ ${escHtml(state.error)}</div>`;
+}
+
+function renderResults() {
+  const n = state.cards.length;
+  const allCopied = state.copied === 'all';
+  return `<div id="results">
+    <hr class="section-div">
+    <div class="cards-header">
+      <div>
+        <h2>${n} Thẻ${n > 1 ? ' Tri Thức' : ' Tri Thức'}</h2>
+        <p>Review → chỉnh nếu cần → copy vào Sheet KHO</p>
+      </div>
+    </div>
+    ${state.cards.map((card, idx) => renderCard(card, idx)).join('')}
+    ${n > 0 ? renderCopyPanel(allCopied) : ''}
+  </div>`;
+}
+
+function renderCard(card, idx) {
+  const isEditing  = state.editing === idx;
+  const isExpanded = state.expanded[idx];
+  const cardCopied = state.copied === idx;
+  const nguonInfo  = NGUON_OPTIONS.find(n => n.value === card.nguon) || NGUON_OPTIONS[0];
+
+  if (isEditing) return renderCardEdit(card, idx);
+
+  const longContent = card.noi_dung && card.noi_dung.length > 300;
+
+  return `<div class="card ${cardCopied ? 'copied-flash' : ''}" id="card-${idx}">
+    <div class="card-head">
+      <span class="card-num">#${idx+1}</span>
+      <span class="card-ten">${escHtml(card.ten_the)}</span>
+      <div class="card-actions">
+        <button class="btn btn-sm btn-edit" onclick="startEdit(${idx})">Sửa</button>
+        <button class="btn btn-sm btn-delete" onclick="deleteCard(${idx})">✕</button>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="cau-block" id="cau-${idx}">
+        <div class="field-label">câu cốt lõi</div>
+        <div class="cau-text">${escHtml(card.cau_cot_loi)}</div>
+      </div>
+      <div class="noidung-block">
+        <div class="field-label" style="margin-bottom:8px">nội dung</div>
+        <div class="noidung-text ${longContent && !isExpanded ? 'noidung-fade' : ''}" id="nd-${idx}">
+          ${escHtml(card.noi_dung)}
+        </div>
+        ${longContent ? `<button class="show-more-btn" onclick="toggleExpand(${idx})">
+          ${isExpanded ? '▲ Thu gọn' : '▼ Đọc đầy đủ'}
+        </button>` : ''}
+      </div>
+      <div class="card-tags">
+        <span class="tag tag-nguon">${escHtml(card.nguon)}</span>
+        <span class="tag tag-chude">${escHtml(card.chu_de?.split('-')[0] || 'C1')}</span>
+        <span class="tag tag-copy" onclick="copyCard(${idx})" title="Copy thẻ này">
+          ${cardCopied ? '✓ Copied' : '📋 Copy thẻ này'}
+        </span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderCardEdit(card, idx) {
+  const nguonOpts = NGUON_OPTIONS.map(n =>
+    `<option value="${n.value}" ${state.editData.nguon === n.value ? 'selected' : ''}>${n.label} → ${n.collection}</option>`
+  ).join('');
+  const chuDeOpts = CHUDE_OPTIONS.map(c =>
+    `<option value="${c.value}" ${state.editData.chu_de === c.value ? 'selected' : ''}>${c.label}</option>`
+  ).join('');
+
+  return `<div class="card" id="card-${idx}" style="border-color:#383838">
+    <div class="card-head">
+      <span class="card-num">#${idx+1}</span>
+      <span class="card-ten" style="color:var(--text-muted)">Đang chỉnh...</span>
+      <div class="card-actions">
+        <button class="btn btn-sm btn-copy" onclick="saveEdit(${idx})">Lưu</button>
+        <button class="btn btn-sm btn-delete" onclick="cancelEdit()">Huỷ</button>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="edit-field">
+        <div class="edit-label">ten_the</div>
+        <input class="edit-input" value="${escHtml(state.editData.ten_the || '')}" oninput="editField('ten_the', this.value)" />
+      </div>
+      <div class="edit-field">
+        <div class="edit-label">cau_cot_loi — 1 câu, tối đa 20 từ</div>
+        <input class="edit-input" value="${escHtml(state.editData.cau_cot_loi || '')}" oninput="editField('cau_cot_loi', this.value)" />
+      </div>
+      <div class="edit-field">
+        <div class="edit-label">noi_dung</div>
+        <textarea class="edit-textarea" oninput="editField('noi_dung', this.value)">${escHtml(state.editData.noi_dung || '')}</textarea>
+      </div>
+      <div class="edit-field">
+        <div class="edit-label">nguon</div>
+        <select class="edit-select" onchange="editField('nguon', this.value)">${nguonOpts}</select>
+      </div>
+      <div class="edit-field">
+        <div class="edit-label">chu_de</div>
+        <select class="edit-select" onchange="editField('chu_de', this.value)">${chuDeOpts}</select>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderCopyPanel(allCopied) {
+  return `<div class="copy-panel">
+    <div class="copy-guide">
+      <strong>Cách paste vào Google Sheet (Sheet KHO):</strong><br>
+      1. Click vào ô <code>B</code> của dòng trống đầu tiên<br>
+      2. Nhấn <strong>Ctrl+V</strong> (hoặc Cmd+V)<br>
+      3. Dữ liệu tự điền vào cột B→G ✓<br>
+      <span style="color:var(--text-muted)">Cột H trở đi để trống — EC2 tự điền lúc 02:00 AM</span>
+    </div>
+    <button class="btn btn-copy-all" onclick="copyCard('all')">
+      ${allCopied ? '✓ Đã copy! Vào Sheet paste ngay.' : `📋 Copy tất cả ${state.cards.length > 1 ? state.cards.length + ' thẻ' : '1 thẻ'} → Google Sheet`}
+    </button>
+  </div>`;
+}
+
+function renderFooter() {
+  return `<div class="footer">
+    <p>
+      <em>atomic-writer</em> · Lê Hữu Tuyến<br>
+      claude-haiku-4-5 · text-embedding-3-small · Qdrant<br>
+      "Viết nhỏ mỗi ngày. Lưu đúng cấu trúc. Để AI nhân lên."
+    </p>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  EVENT BINDING (gắn sau mỗi render vì innerHTML)
+// ═══════════════════════════════════════════════════════════════
+function bindEvents() {
+  // textarea sync (cần bind lại vì innerHTML)
+  const ta = document.getElementById('noteInput');
+  if (ta) {
+    ta.value = state.input; // đồng bộ lại value
+    ta.addEventListener('input', function() {
+      state.input = this.value;
+      const mc = document.querySelector('.char-count');
+      if (mc) mc.textContent = this.value.length + ' ký tự';
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  GLOBAL HANDLERS (onclick trong HTML string)
+// ═══════════════════════════════════════════════════════════════
+window.saveKey     = ()  => { const v = document.getElementById('apiKeyInput')?.value || ''; localStorage.setItem('ant_key', v); setState({ apiKey: v, keySaved: !!v }); };
+window.setNguon    = (v) => { localStorage.setItem('sel_nguon', v); setState({ nguon: v }); };
+window.setChuDe    = (v) => { localStorage.setItem('sel_chude', v); setState({ chuDe: v }); };
+window.onInput     = (el) => { state.input = el.value; };
+window.generate    = generate;
+window.copyCard    = copyCard;
+window.startEdit   = startEdit;
+window.cancelEdit  = cancelEdit;
+window.saveEdit    = saveEdit;
+window.deleteCard  = deleteCard;
+window.editField   = (key, val) => { state.editData[key] = val; };
+window.toggleExpand = (idx) => { state.expanded = { ...state.expanded, [idx]: !state.expanded[idx] }; render(); };
+
+// ═══════════════════════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════════════════════
+function escHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════════
+render();
 </script>
 </body>
 </html>
