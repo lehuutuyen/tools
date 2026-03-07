@@ -191,7 +191,7 @@ Trả về JSON: { "so_the_du_kien": number, "chat_luong": "TỐT|KHÁ|YẾU", "
             // Helpers cho bộ đếm từ
             const getWordCount = (text) => {
                 const trimmed = text.trim();
-                return trimmed ? trimmed.split(/\\s+/).length : 0;
+                return trimmed ? trimmed.split(/\s+/).length : 0;
             };
             const currentWordCount = tab === 'raw' 
                 ? getWordCount(rawInput) 
@@ -254,7 +254,7 @@ Trả về JSON: { "so_the_du_kien": number, "chat_luong": "TỐT|KHÁ|YẾU", "
                                             <span className="w-5 h-5 rounded bg-gray-900 text-white flex items-center justify-center text-xs">2</span> 
                                             THỰC (Reality/Context)
                                         </label>
-                                        <p className="text-xs italic text-gray-500 mb-2 pl-7">1. Khái quát vấn đề chung -> 2. Đào sâu nguyên nhân/hậu quả -> 3. Triển khai (Ví dụ/Câu chuyện nhỏ). Làm người xem gật đầu vì bị "trúng tim đen".</p>
+                                        <p className="text-xs italic text-gray-500 mb-2 pl-7">1. Khái quát vấn đề chung -&gt; 2. Đào sâu nguyên nhân/hậu quả -&gt; 3. Triển khai (Ví dụ/Câu chuyện nhỏ). Làm người xem gật đầu vì bị "trúng tim đen".</p>
                                         <textarea value={guided.context} onChange={(e)=>setGuided({...guided, context:e.target.value})} 
                                                   className="w-full h-24 input-classic p-3 text-sm ml-7" style={{width: 'calc(100% - 1.75rem)'}} placeholder="Rất nhiều người bắt đầu với vấn đề giống nhau..." />
                                     </div>
@@ -393,7 +393,7 @@ Trả về JSON: { "so_the_du_kien": number, "chat_luong": "TỐT|KHÁ|YẾU", "
                                     </div>
 
                                     <div className="pt-4 border-t border-gray-100 flex justify-between items-center text-xs text-gray-500">
-                                        <span>Độ dài: <strong className={c.noi_dung.split(/\\s+/).length > 250 ? 'text-red-500' : 'text-green-600'}>{c.noi_dung.split(/\\s+/).length} từ</strong></span>
+                                        <span>Độ dài: <strong className={c.noi_dung.split(/\s+/).length > 250 ? 'text-red-500' : 'text-green-600'}>{c.noi_dung.split(/\s+/).length} từ</strong></span>
                                         <span className="text-right pl-4">Đánh giá: {c.ly_do_score}</span>
                                     </div>
                                 </div>
