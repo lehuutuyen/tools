@@ -3,58 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <title>ACS Writing Assistant v4.1 — Trợ Lý Tri Thức</title>
+    <title>ACS Writing Assistant v4.2 — Trợ Lý Tri Thức</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --paper-bg: #fdfcf8;
-            --paper-border: #e8e6df;
+            --paper-bg: #ffffff;
+            --paper-border: #e5e7eb;
             --accent-blue: #2563eb;
             --accent-amber: #b45309;
         }
         body {
-            font-family: 'Spline Sans', sans-serif;
-            background-color: #f5f4ef;
-            color: #1a1a1c;
+            /* Dùng font Inter phổ biến, dự phòng Arial giúp chống lỗi font TV */
+            font-family: 'Inter', Arial, sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
             -webkit-font-smoothing: antialiased;
         }
         .paper {
             background-color: var(--paper-bg);
             border: 1px solid var(--paper-border);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-            border-radius: 8px;
-        }
-        .font-serif {
-            font-family: 'Playfair Display', serif;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border-radius: 12px;
         }
         .btn-primary {
-            background-color: #1a1a1c;
+            background-color: #111827;
             color: white;
             transition: all 0.2s;
         }
         .btn-primary:hover {
-            background-color: #333;
+            background-color: #374151;
             transform: translateY(-1px);
         }
         .input-classic {
-            background: white;
+            background: #f9fafb;
             border: 1px solid #d1d5db;
-            border-radius: 6px;
-            transition: border-color 0.2s;
+            border-radius: 8px;
+            transition: all 0.2s;
+            color: #1f2937;
         }
         .input-classic:focus {
+            background: #ffffff;
             border-color: var(--accent-blue);
             outline: none;
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
         .tab-active {
-            border-bottom: 2px solid #1a1a1c;
-            color: #1a1a1c;
+            border-bottom: 2px solid #111827;
+            color: #111827;
             font-weight: 600;
+        }
+        .tab-inactive {
+            color: #6b7280;
+        }
+        .tab-inactive:hover {
+            color: #374151;
         }
         @media (max-width: 640px) {
             .mobile-p { padding: 1rem; }
@@ -77,19 +83,19 @@ Sử dụng: Open Loop, Sleight of Mouth, Embedded Command, Pacing & Leading.
 Chiến lược: Đánh thức ham muốn có sẵn.
 `.trim();
 
-        const SYSTEM_PROMPT = `Bạn là Trợ lý Viết Bài Nguyên Tử v4.1 cho ${USER_NAME}.
+        const SYSTEM_PROMPT = `Bạn là Trợ lý Viết Bài Nguyên Tử v4.2 cho ${USER_NAME}.
 Nhiệm vụ: Chuyển ghi chú thành Thẻ Tri Thức chuẩn schema.
 
 === NGUYÊN TẮC ===
-1. SINGLE IDEA: Mỗi thẻ 1 ý tưởng. Tách đúng số lượng thẻ người dùng yêu cầu.
-2. DUNG LƯỢNG: noi_dung PHẢI ≤ 250 từ. Sắc bén, không từ thừa.
+1. SINGLE IDEA: Mỗi thẻ 1 thông điệp chính. Tách đúng số lượng thẻ người dùng yêu cầu nếu nội dung có nhiều ý.
+2. DUNG LƯỢNG: noi_dung dài khoảng 150-250 từ (không vượt quá). Càng ngắn càng sắc bén.
 3. BRAND VOICE: ${BRAND_VOICE}
 
 === CẤU TRÚC ĐỀ–THỰC–LUẬN–KẾT ===
-- ĐỀ (Hook): Nghịch lý, câu hỏi gây tò mò.
-- THỰC (Context): Bối cảnh thực tế VN, cụ thể tên/việc.
-- LUẬN (Argument): 1 luận điểm chính + 1 phản biện hóa giải.
-- KẾT (Conclusion): Đúc kết đứng được một mình.
+- ĐỀ (Hook): Gồm What, Who, Why, Why you, Why now.
+- THỰC (Context): Khái quát (vấn đề chung) -> Đào sâu (nguyên nhân/hậu quả) -> Triển khai (ví dụ thực tế).
+- LUẬN (Argument): 1-3 luận điểm, có logic, dẫn chứng và phản biện (hoá giải nghi ngờ).
+- KẾT (Conclusion): Tóm tắt thông điệp + CTA gợi mở.
 
 === OUTPUT SCHEMA (JSON Array) ===
 [
@@ -113,7 +119,7 @@ Luôn trả về JSON Array thuần.`;
 Trả về JSON: { "so_the_du_kien": number, "chat_luong": "TỐT|KHÁ|YẾU", "goi_y": string[], "bac_nhan_thuc": string }`;
 
         function App() {
-            const [tab, setTab] = useState('raw'); // 'raw' hoặc 'guided'
+            const [tab, setTab] = useState('guided'); // 'raw', 'guided', 'example'
             const [apiKey, setApiKey] = useState(localStorage.getItem('acs_v4_key') || '');
             const [rawInput, setRawInput] = useState('');
             const [guided, setGuided] = useState({ hook: '', context: '', argument: '', conclusion: '' });
@@ -141,6 +147,7 @@ Trả về JSON: { "so_the_du_kien": number, "chat_luong": "TỐT|KHÁ|YẾU", "
                 setAnalyzing(true); setAnalysis(null); setError('');
                 try {
                     const text = tab === 'raw' ? rawInput : Object.values(guided).join('\n');
+                    if (!text.trim()) throw new Error("Chưa có nội dung để phân tích");
                     const res = await callAI(ANALYZE_PROMPT, text);
                     setAnalysis(JSON.parse(res.replace(/```json|```/g, "").trim()));
                 } catch (e) { setError('Lỗi: ' + e.message); }
@@ -158,153 +165,244 @@ Trả về JSON: { "so_the_du_kien": number, "chat_luong": "TỐT|KHÁ|YẾU", "
                 setFormatting(true); setCards([]); setError('');
                 try {
                     let text = tab === 'raw' ? rawInput : `ĐỀ: ${guided.hook}\nTHỰC: ${guided.context}\nLUẬN: ${guided.argument}\nKẾT: ${guided.conclusion}`;
-                    if (analysis) text = `(Yêu cầu tách thành ${analysis.so_the_du_kien} thẻ)\n\n${text}`;
+                    if (!text.trim()) throw new Error("Chưa có nội dung để format");
+                    
+                    if (analysis && analysis.so_the_du_kien > 1) {
+                        text = `(Yêu cầu tách thành ${analysis.so_the_du_kien} thẻ để đảm bảo tính Đơn Nhất)\n\n${text}`;
+                    }
                     
                     const res = await callAI(SYSTEM_PROMPT, text);
                     const parsed = JSON.parse(res.replace(/```json|```/g, "").trim());
-                    setCards(parsed.map(c => ({ ...c, local_id: generateID() })));
+                    // Đảm bảo là mảng
+                    const parsedArray = Array.isArray(parsed) ? parsed : [parsed];
+                    setCards(parsedArray.map(c => ({ ...c, local_id: generateID() })));
                 } catch (e) { setError('Lỗi: ' + e.message); }
                 setFormatting(false);
             };
 
             const copyAll = () => {
                 const rows = cards.map(c => 
-                    `${c.local_id}\t${c.ten_the}\t${c.cau_cot_loi}\t${c.noi_dung}\t${c.nguon}\t${c.chu_de}\tpending\t\t`
+                    `${c.local_id}\t${c.ten_the}\t${c.cau_cot_loi}\t${c.noi_dung.replace(/\n/g, '\\n')}\t${c.nguon}\t${c.chu_de}\tpending\t\t`
                 ).join('\n');
                 navigator.clipboard.writeText(rows);
                 setCopied(true); setTimeout(() => setCopied(false), 2000);
             };
 
+            // Helpers cho bộ đếm từ
+            const getWordCount = (text) => {
+                const trimmed = text.trim();
+                return trimmed ? trimmed.split(/\\s+/).length : 0;
+            };
+            const currentWordCount = tab === 'raw' 
+                ? getWordCount(rawInput) 
+                : getWordCount(Object.values(guided).join(' '));
+
             return (
-                <div className="max-w-3xl mx-auto px-4 py-10 mobile-p">
+                <div className="max-w-4xl mx-auto px-4 py-8 mobile-p">
                     {/* Header */}
-                    <div className="mb-10 text-center">
-                        <h1 className="font-serif text-3xl font-bold mb-2">ACS Writing Assistant v4.1</h1>
-                        <p className="text-gray-500 text-sm italic">"Đánh thức những ham muốn đã luôn ở đó."</p>
+                    <div className="mb-8 text-center border-b border-gray-200 pb-6">
+                        <h1 className="text-3xl font-extrabold mb-2 text-gray-900 tracking-tight">ACS Writing Assistant</h1>
+                        <p className="text-gray-500 text-sm">Hiểu nhanh – Nhớ lâu – Hành động ngay (v4.2)</p>
                     </div>
 
                     {/* Key Config */}
-                    <div className="paper p-4 mb-6 flex items-center gap-3">
-                        <span className="text-xs font-bold text-gray-400 uppercase">OpenAI Key</span>
-                        <input type="password" value={apiKey} onChange={(e)=>saveKey(e.target.value)} 
-                               className="flex-1 text-sm bg-transparent border-none focus:ring-0" placeholder="sk-..." />
+                    <div className="paper p-4 mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                        <label className="text-xs font-bold text-gray-500 uppercase flex-shrink-0">OpenAI API Key</label>
+                        <div className="w-full flex">
+                            <input type="password" value={apiKey} onChange={(e)=>saveKey(e.target.value)} 
+                                   className="flex-1 text-sm bg-white border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none transition" 
+                                   placeholder="sk-..." />
+                        </div>
                     </div>
 
                     {/* Tabs */}
-                    <div className="flex gap-6 mb-6 px-2 border-b border-gray-200">
-                        <button onClick={()=>setTab('raw')} className={`pb-2 text-sm ${tab==='raw'?'tab-active':'text-gray-400'}`}>Dán ghi chú thô</button>
-                        <button onClick={()=>setTab('guided')} className={`pb-2 text-sm ${tab==='guided'?'tab-active':'text-gray-400'}`}>Viết hướng dẫn (Đề-Thực-Luận-Kết)</button>
+                    <div className="flex flex-wrap gap-4 mb-6 px-2 border-b border-gray-200">
+                        <button onClick={()=>setTab('guided')} className={`pb-3 text-sm transition-colors ${tab==='guided'?'tab-active':'tab-inactive'}`}>1. Viết theo Hướng Dẫn</button>
+                        <button onClick={()=>setTab('raw')} className={`pb-3 text-sm transition-colors ${tab==='raw'?'tab-active':'tab-inactive'}`}>2. Dán Ghi Chú Thô</button>
+                        <button onClick={()=>setTab('example')} className={`pb-3 text-sm transition-colors ${tab==='example'?'tab-active':'tab-inactive'}`}>📚 3. Quy chuẩn & Ví dụ</button>
                     </div>
 
-                    {/* Input Area */}
-                    <div className="paper p-6 mb-6">
-                        {tab === 'raw' ? (
-                            <textarea value={rawInput} onChange={(e)=>setRawInput(e.target.value)}
-                                      className="w-full h-48 input-classic p-4 text-sm leading-relaxed" 
-                                      placeholder="Paste ghi chú thô, quan sát hoặc ý tưởng tại đây..." />
-                        ) : (
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="text-[11px] font-bold text-gray-400 uppercase">ĐỀ (Hook)</label>
-                                    <p className="text-[10px] italic text-gray-500 mb-1">Mở đầu bằng nghịch lý, câu hỏi gây tò mò. Vd: Tại sao càng làm nhiều càng ít tiền?</p>
-                                    <textarea value={guided.hook} onChange={(e)=>setGuided({...guided, hook:e.target.value})} className="w-full h-16 input-classic p-3 text-sm" />
-                                </div>
-                                <div>
-                                    <label className="text-[11px] font-bold text-gray-400 uppercase">THỰC (Context)</label>
-                                    <p className="text-[10px] italic text-gray-500 mb-1">Bối cảnh cụ thể. Phải có nhân vật, địa điểm cụ thể.</p>
-                                    <textarea value={guided.context} onChange={(e)=>setGuided({...guided, context:e.target.value})} className="w-full h-16 input-classic p-3 text-sm" />
-                                </div>
-                                <div>
-                                    <label className="text-[11px] font-bold text-gray-400 uppercase">LUẬN (Argument)</label>
-                                    <p className="text-[10px] italic text-gray-500 mb-1">Tại sao nó lại như vậy? Giải quyết băn khoăn của người đọc.</p>
-                                    <textarea value={guided.argument} onChange={(e)=>setGuided({...guided, argument:e.target.value})} className="w-full h-16 input-classic p-3 text-sm" />
-                                </div>
-                                <div>
-                                    <label className="text-[11px] font-bold text-gray-400 uppercase">KẾT (Conclusion)</label>
-                                    <p className="text-[10px] italic text-gray-500 mb-1">Đúc rút đứng được một mình (Core Lesson).</p>
-                                    <textarea value={guided.conclusion} onChange={(e)=>setGuided({...guided, conclusion:e.target.value})} className="w-full h-16 input-classic p-3 text-sm" />
-                                </div>
+                    {/* INPUT AREA */}
+                    {tab !== 'example' && (
+                        <div className="paper p-6 sm:p-8 mb-6 relative">
+                            {/* Word count badge */}
+                            <div className="absolute top-4 right-6 text-xs font-medium px-2 py-1 bg-gray-100 text-gray-600 rounded">
+                                {currentWordCount} từ
                             </div>
-                        )}
 
-                        <div className="mt-6 flex gap-3">
-                            <button onClick={handleAnalyze} disabled={analyzing || formatting} className="flex-1 py-3 text-sm border border-gray-300 rounded-md font-semibold hover:bg-gray-50 transition">
-                                {analyzing ? '⏳ Phân tích...' : '🔍 Chẩn báo (Analyze)'}
-                            </button>
-                            <button onClick={handleFormat} disabled={formatting || analyzing || !apiKey} className="flex-[2] py-3 text-sm btn-primary rounded-md font-semibold shadow-md">
-                                {formatting ? '⏳ Đang đúc kết...' : '✨ Sắc nét hóa (Format)'}
-                            </button>
+                            {tab === 'raw' ? (
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">Thông tin tự do:</label>
+                                    <textarea value={rawInput} onChange={(e)=>setRawInput(e.target.value)}
+                                          className="w-full h-48 input-classic p-4 text-sm leading-relaxed resize-y" 
+                                          placeholder="Dump mọi thứ bạn đang nghĩ vào đây. Thấy gì, học được gì, khách hàng nói gì..." />
+                                </div>
+                            ) : (
+                                <div className="space-y-6 mt-4">
+                                    {/* Hướng dẫn Guided */}
+                                    <div>
+                                        <label className="flex items-center gap-2 text-sm font-bold text-gray-800 uppercase mb-1">
+                                            <span className="w-5 h-5 rounded bg-gray-900 text-white flex items-center justify-center text-xs">1</span> 
+                                            ĐỀ (Title/Hook)
+                                        </label>
+                                        <p className="text-xs italic text-gray-500 mb-2 pl-7">What (cái gì), Who (cho ai), Why (sao đọc), Why you (quyền nói), Why now (sao đọc ngay).</p>
+                                        <textarea value={guided.hook} onChange={(e)=>setGuided({...guided, hook:e.target.value})} 
+                                                  className="w-full h-20 input-classic p-3 text-sm ml-7" style={{width: 'calc(100% - 1.75rem)'}} placeholder="Ví dụ: Cách xây dựng thương hiệu cá nhân... bài học từ 3 năm..." />
+                                    </div>
+                                    <div>
+                                        <label className="flex items-center gap-2 text-sm font-bold text-gray-800 uppercase mb-1">
+                                            <span className="w-5 h-5 rounded bg-gray-900 text-white flex items-center justify-center text-xs">2</span> 
+                                            THỰC (Reality/Context)
+                                        </label>
+                                        <p className="text-xs italic text-gray-500 mb-2 pl-7">1. Khái quát vấn đề chung -> 2. Đào sâu nguyên nhân/hậu quả -> 3. Triển khai (Ví dụ/Câu chuyện nhỏ). Làm người xem gật đầu vì bị "trúng tim đen".</p>
+                                        <textarea value={guided.context} onChange={(e)=>setGuided({...guided, context:e.target.value})} 
+                                                  className="w-full h-24 input-classic p-3 text-sm ml-7" style={{width: 'calc(100% - 1.75rem)'}} placeholder="Rất nhiều người bắt đầu với vấn đề giống nhau..." />
+                                    </div>
+                                    <div>
+                                        <label className="flex items-center gap-2 text-sm font-bold text-gray-800 uppercase mb-1">
+                                            <span className="w-5 h-5 rounded bg-gray-900 text-white flex items-center justify-center text-xs">3</span> 
+                                            LUẬN (Argument)
+                                        </label>
+                                        <p className="text-xs italic text-gray-500 mb-2 pl-7">Phần giá trị nhất. Nêu 1-3 luận điểm chính. Đi kèm Luận cứ (logic) + Dẫn chứng + Phản biện (hoá giải nghi ngờ).</p>
+                                        <textarea value={guided.argument} onChange={(e)=>setGuided({...guided, argument:e.target.value})} 
+                                                  className="w-full h-24 input-classic p-3 text-sm ml-7" style={{width: 'calc(100% - 1.75rem)'}} placeholder="Khi dùng cấu trúc này, thời gian viết giảm xuống. Nhiều người nghĩ là gò bó, nhưng..." />
+                                    </div>
+                                    <div>
+                                        <label className="flex items-center gap-2 text-sm font-bold text-gray-800 uppercase mb-1">
+                                            <span className="w-5 h-5 rounded bg-gray-900 text-white flex items-center justify-center text-xs">4</span> 
+                                            KẾT (Conclusion)
+                                        </label>
+                                        <p className="text-xs italic text-gray-500 mb-2 pl-7">Tóm tắt thông điệp thành 1 insight cốt lõi. Sau đó là CTA nhẹ nhàng (Call to action).</p>
+                                        <textarea value={guided.conclusion} onChange={(e)=>setGuided({...guided, conclusion:e.target.value})} 
+                                                  className="w-full h-20 input-classic p-3 text-sm ml-7" style={{width: 'calc(100% - 1.75rem)'}} placeholder="Đây không phải kỹ thuật phức tạp... Hãy thử viết 1 bài hôm nay." />
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                                <button onClick={handleAnalyze} disabled={analyzing || formatting} className="flex-1 py-3 text-sm border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition disabled:opacity-50">
+                                    {analyzing ? '⏳ Phân tích...' : '🔍 (1) Chẩn báo (Analyze)'}
+                                </button>
+                                <button onClick={handleFormat} disabled={formatting || analyzing || !apiKey} className="flex-[2] py-3 text-sm btn-primary rounded-lg font-semibold shadow-md disabled:opacity-50">
+                                    {formatting ? '⏳ Đang đúc kết...' : '✨ (2) Sắc nét hóa (Format)'}
+                                </button>
+                            </div>
+                            {error && <p className="mt-4 text-xs font-medium text-red-600 bg-red-50 border border-red-200 p-3 rounded-lg">{error}</p>}
                         </div>
-                        {error && <p className="mt-3 text-xs text-red-500 bg-red-50 p-2 rounded">{error}</p>}
-                    </div>
+                    )}
+
+                    {/* EXAMPLE TAB */}
+                    {tab === 'example' && (
+                        <div className="paper p-6 sm:p-8 mb-6 fade-in text-gray-800 text-sm leading-relaxed">
+                            <h2 className="text-xl font-bold mb-4">1. Định nghĩa dễ hiểu về Bài viết nguyên tử (Atomic Essay)</h2>
+                            <p className="mb-4">Là bài viết <strong>ngắn, cô đọng, tập trung vào một ý tưởng trung tâm duy nhất</strong>. Gọi là “nguyên tử” vì nó là đơn vị nhỏ nhất nhưng vẫn đầy đủ cấu trúc lập luận.</p>
+                            <ul className="list-disc pl-5 mb-6 space-y-1">
+                                <li>Xoay quanh <strong>1 thông điệp chính</strong></li>
+                                <li>Logic chặt chẽ (Đề - Thực - Luận - Kết)</li>
+                                <li>Đọc nhanh (khoảng 150-300 từ)</li>
+                            </ul>
+
+                            <h2 className="text-xl font-bold mb-4 border-t pt-6">2. Cấu trúc 4 phần chuẩn:</h2>
+                            <ul className="list-disc pl-5 mb-6 space-y-2">
+                                <li><strong>ĐỀ (Title/Hook):</strong> Điểm chạm đầu tiên (What, Who, Why, Why you, Why now).</li>
+                                <li><strong>THỰC (Reality/Context):</strong> Sự thật thực tế, bối cảnh chung, đào sâu vấn đề để người đọc gật đầu.</li>
+                                <li><strong>LUẬN (Argument):</strong> Phần giá trị nhất. Đưa ra quan điểm, luận cứ thực chứng và hóa giải phản biện.</li>
+                                <li><strong>KẾT (Conclusion):</strong> Tóm tắt 1 insight nhớ đời và dắt người đọc hành động (CTA).</li>
+                            </ul>
+
+                            <h2 className="text-xl font-bold mb-4 border-t pt-6">3. Ví dụ hoàn chỉnh: Khoảnh khắc "Click" trong ngày</h2>
+                            <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                                <h3 className="font-bold text-lg mb-2">ĐỀ: Truy tìm khoảnh khắc "Click" trong ngày</h3>
+                                <p className="italic text-gray-600 mb-4 font-medium border-l-[3px] border-gray-300 pl-3">
+                                    Cảm hứng viết lách không đến từ những thư viện xa xôi, mà nằm ngay trong những trải nghiệm thực tế bạn vừa trải qua.
+                                </p>
+                                
+                                <p className="mb-2"><strong>THỰC & LUẬN:</strong><br/>
+                                Để có chất liệu viết mỗi ngày, hãy tự hỏi: "Điều gì đã khiến mình hiểu ra vấn đề (click) hôm nay?". Những bài viết tốt nhất không vĩ mô; chúng xuất phát từ một quan sát nhỏ, một cuộc hội thoại với khách hàng, hay một lỗi sai ngớ ngẩn bạn vừa phạm phải.<br/><br/>
+                                Khi bạn nhận diện được một bài học, đó là hạt giống cho một bài viết nguyên tử. Đừng cố tìm thứ vĩ đại. Hãy tập trung vào tính tự nhận thức và diễn đạt lại thật đời thường. Thực tế luôn cộng hưởng mạnh hơn là lý thuyết nhặt trên mạng.
+                                </p>
+                                
+                                <p className="mb-0 mt-4 border-t pt-3"><strong>KẾT:</strong><br/>
+                                Ý tưởng tốt nhất là ý tưởng giải quyết một vấn đề thực tế mà bạn vừa vượt qua trong vài giờ trước. Hãy viết nó ngay.
+                                </p>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Analysis Section */}
-                    {analysis && (
-                        <div className="paper p-6 mb-6 bg-blue-50/50 border-blue-100 animate-in slide-in-from-top">
-                            <h3 className="text-xs font-bold text-blue-600 uppercase mb-3 flex items-center justify-between">
-                                Chẩn báo tri thức
-                                <span className={`px-2 py-0.5 rounded text-[10px] ${analysis.chat_luong==='TỐT'?'bg-green-100 text-green-700':'bg-amber-100 text-amber-700'}`}>{analysis.chat_luong}</span>
+                    {analysis && tab !== 'example' && (
+                        <div className="paper p-6 mb-6 bg-blue-50 border border-blue-100">
+                            <h3 className="text-sm font-bold text-blue-800 uppercase mb-4 flex items-center justify-between">
+                                Chẩn báo nhanh từ AI
+                                <span className={`px-2.5 py-1 rounded text-xs font-semibold ${analysis.chat_luong==='TỐT'?'bg-green-100 text-green-700':'bg-amber-100 text-amber-700'}`}>{analysis.chat_luong}</span>
                             </h3>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="text-xs">
-                                    <p className="text-gray-400 mb-1">Dự kiến tách</p>
-                                    <p className="font-bold text-gray-700">{analysis.so_the_du_kien} thẻ Atomic</p>
+                            <div className="grid grid-cols-2 gap-4 mb-4">
+                                <div className="bg-white p-3 rounded border border-blue-100 shadow-sm">
+                                    <p className="text-xs text-gray-500 mb-1">Cấu trúc</p>
+                                    <p className="font-bold text-gray-800 text-sm">Dự kiến tách {analysis.so_the_du_kien} bài</p>
                                 </div>
-                                <div className="text-xs">
-                                    <p className="text-gray-400 mb-1">Nhận thức khán giả</p>
-                                    <p className="font-bold text-gray-700">{analysis.bac_nhan_thuc}</p>
+                                <div className="bg-white p-3 rounded border border-blue-100 shadow-sm">
+                                    <p className="text-xs text-gray-500 mb-1">Khán giả</p>
+                                    <p className="font-bold text-gray-800 text-sm">{analysis.bac_nhan_thuc}</p>
                                 </div>
                             </div>
-                            <ul className="mt-4 space-y-1.5 border-t border-blue-100 pt-3">
-                                {analysis.goi_y.map((g,i) => <li key={i} className="text-[11px] text-gray-600 flex gap-2"><span>→</span> {g}</li>)}
-                            </ul>
+                            <div className="bg-white p-4 rounded border border-blue-100 shadow-sm">
+                                <p className="text-xs font-bold text-gray-700 mb-2">Lời khuyên bổ sung:</p>
+                                <ul className="space-y-1.5">
+                                    {analysis.goi_y.map((g,i) => <li key={i} className="text-sm text-gray-600 flex gap-2"><span className="text-blue-500">•</span> {g}</li>)}
+                                </ul>
+                            </div>
                         </div>
                     )}
 
                     {/* Output Section */}
-                    {cards.length > 0 && (
-                        <div className="space-y-8">
-                            <div className="flex items-center justify-between px-2">
-                                <h2 className="font-serif text-xl font-bold">Thẻ Tri Thức Đã Đúc Kết</h2>
-                                <button onClick={copyAll} className="text-xs font-bold px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
-                                    {copied ? '✅ ĐÃ COPY CHO GSHEET' : '📋 COPY TẤT CẢ (9 CỘT)'}
+                    {cards.length > 0 && tab !== 'example' && (
+                        <div className="space-y-6 mt-10 animate-in fade-in duration-500">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between px-1 gap-4">
+                                <div>
+                                    <h2 className="text-2xl font-bold text-gray-900">Thành phẩm </h2>
+                                    <p className="text-sm text-gray-500 mt-1">Chuẩn Đề-Thực-Luận-Kết. Copied vào Gsheet ngay.</p>
+                                </div>
+                                <button onClick={copyAll} className="px-5 py-2.5 bg-green-600 font-semibold text-white text-sm rounded-lg hover:bg-green-700 transition shadow-sm flex-shrink-0">
+                                    {copied ? '✅ COPY THÀNH CÔNG' : '📋 COPY TẤT CẢ VÀO GSHEET'}
                                 </button>
                             </div>
 
                             {cards.map((c, i) => (
-                                <div key={i} className="paper p-8 relative">
-                                    <div className="flex items-center justify-between mb-6">
-                                        <div className="flex gap-2">
-                                            <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-2 py-0.5 rounded">{c.local_id}</span>
-                                            <span className="text-[10px] font-bold text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded uppercase">{c.nguon}</span>
+                                <div key={i} className="paper p-6 sm:p-8">
+                                    <div className="flex flex-wrap items-center justify-between mb-5 gap-y-3">
+                                        <div className="flex flex-wrap gap-2">
+                                            <span className="text-xs font-mono font-bold text-gray-500 bg-gray-100 border border-gray-200 px-2 py-1 rounded">{c.local_id}</span>
+                                            <span className="text-xs font-bold text-blue-700 bg-blue-50 border border-blue-100 px-2 py-1 rounded">{c.nguon}</span>
+                                            <span className="text-xs font-bold text-gray-700 bg-gray-50 border border-gray-200 px-2 py-1 rounded">{c.chu_de}</span>
                                         </div>
-                                        <div className="text-right">
-                                            <div className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Atomic Score</div>
-                                            <div className={`text-sm font-bold ${c.atomic_score > 8 ? 'text-green-600' : 'text-amber-600'}`}>{c.atomic_score}/10</div>
+                                        <div className="text-right flex items-center gap-2">
+                                            <div className="text-[10px] font-bold text-gray-400 uppercase">Atomic Score:</div>
+                                            <div className={`text-sm font-bold px-2 py-0.5 rounded ${c.atomic_score >= 8 ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>{c.atomic_score}/10</div>
                                         </div>
                                     </div>
 
-                                    <h3 className="font-serif text-2xl font-bold mb-4 leading-tight text-gray-800">{c.ten_the}</h3>
+                                    <h3 className="text-xl sm:text-2xl font-bold mb-4 text-gray-900 leading-snug">{c.ten_the}</h3>
                                     
-                                    <div className="bg-gray-50 border-l-4 border-gray-300 p-4 mb-6 italic text-gray-600 text-sm">
+                                    <div className="bg-gray-50 border-l-[3px] border-gray-800 p-4 mb-5 italic text-gray-700 text-[15px] font-medium">
                                         "{c.cau_cot_loi}"
                                     </div>
 
-                                    <div className="text-gray-700 text-[15px] leading-[1.8] whitespace-pre-wrap font-light mb-6">
+                                    <div className="text-gray-800 text-[15px] leading-[1.7] whitespace-pre-wrap font-normal mb-6">
                                         {c.noi_dung}
                                     </div>
 
-                                    <div className="pt-4 border-t border-gray-100 flex justify-between items-center text-[10px] text-gray-400">
-                                        <span>Pillar: {c.chu_de}</span>
-                                        <span>Đánh giá: {c.ly_do_score}</span>
+                                    <div className="pt-4 border-t border-gray-100 flex justify-between items-center text-xs text-gray-500">
+                                        <span>Độ dài: <strong className={c.noi_dung.split(/\\s+/).length > 250 ? 'text-red-500' : 'text-green-600'}>{c.noi_dung.split(/\\s+/).length} từ</strong></span>
+                                        <span className="text-right pl-4">Đánh giá: {c.ly_do_score}</span>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     )}
 
-                    <footer className="mt-20 py-8 border-t border-gray-200 text-center text-[10px] text-gray-400 uppercase tracking-[0.2em]">
-                        © 2026 Atomic Content System // {USER_NAME}
+                    <footer className="mt-16 py-6 border-t border-gray-200 text-center text-xs text-gray-400 font-medium tracking-wide">
+                        ATOMIC CONTENT SYSTEM • {USER_NAME}
                     </footer>
                 </div>
             );
